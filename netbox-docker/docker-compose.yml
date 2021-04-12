@@ -32,45 +32,71 @@ services:
 
   # postgres
   pg-0:
-    image: docker.io/bitnami/postgresql-repmgr:13
+    image: docker.io/bitnami/postgresql-repmgr:11
     ports:
       - 5432
     volumes:
       - pg_0_data:/bitnami/postgresql
+    deploy:
+      placement:
+        constraints: [node.hostname == node1]
     environment:
       - POSTGRESQL_POSTGRES_PASSWORD=adminpassword
       - POSTGRESQL_USERNAME=customuser
       - POSTGRESQL_PASSWORD=custompassword
-      - POSTGRESQL_DATABASE=netbox
+      - POSTGRESQL_DATABASE=customdatabase
       - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
       - REPMGR_PASSWORD=repmgrpassword
       - REPMGR_PRIMARY_HOST=pg-0
-      - REPMGR_PARTNER_NODES=pg-0,pg-1
+      - REPMGR_PARTNER_NODES=pg-0,pg-1,pg2
       - REPMGR_NODE_NAME=pg-0
       - REPMGR_NODE_NETWORK_NAME=pg-0
   pg-1:
-    image: docker.io/bitnami/postgresql-repmgr:13
+    image: docker.io/bitnami/postgresql-repmgr:11
     ports:
       - 5432
     volumes:
       - pg_1_data:/bitnami/postgresql
+    deploy:
+      placement:
+        constraints: [node.hostname == node2]
     environment:
       - POSTGRESQL_POSTGRES_PASSWORD=adminpassword
       - POSTGRESQL_USERNAME=customuser
       - POSTGRESQL_PASSWORD=custompassword
-      - POSTGRESQL_DATABASE=netbox
+      - POSTGRESQL_DATABASE=customdatabase
       - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
       - REPMGR_PASSWORD=repmgrpassword
       - REPMGR_PRIMARY_HOST=pg-0
-      - REPMGR_PARTNER_NODES=pg-0,pg-1
+      - REPMGR_PARTNER_NODES=pg-0,pg-1,pg2
       - REPMGR_NODE_NAME=pg-1
       - REPMGR_NODE_NETWORK_NAME=pg-1
+  pg-2:
+    image: docker.io/bitnami/postgresql-repmgr:11
+    ports:
+      - 5432
+    volumes:
+      - pg_2_data:/bitnami/postgresql
+    deploy:
+      placement:
+        constraints: [node.hostname == node3]
+    environment:
+      - POSTGRESQL_POSTGRES_PASSWORD=adminpassword
+      - POSTGRESQL_USERNAME=customuser
+      - POSTGRESQL_PASSWORD=custompassword
+      - POSTGRESQL_DATABASE=customdatabase
+      - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
+      - REPMGR_PASSWORD=repmgrpassword
+      - REPMGR_PRIMARY_HOST=pg-0
+      - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
+      - REPMGR_NODE_NAME=pg-2
+      - REPMGR_NODE_NETWORK_NAME=pg-2
   pgpool:
     image: docker.io/bitnami/pgpool:4
     ports:
       - 5432:5432
     environment:
-      - PGPOOL_BACKEND_NODES=0:pg-0:5432,1:pg-1:5432
+      - PGPOOL_BACKEND_NODES=0:pg-0:5432,1:pg-1:5432,2:pg-2:5432
       - PGPOOL_SR_CHECK_USER=customuser
       - PGPOOL_SR_CHECK_PASSWORD=custompassword
       - PGPOOL_ENABLE_LDAP=no
@@ -84,7 +110,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
   # redis
   redis:
     image: redis:6-alpine
@@ -113,6 +138,8 @@ volumes:
   pg_0_data:
     driver: local
   pg_1_data:
+    driver: local
+  pg_2_data:
     driver: local
   netbox-config:
     driver: local
