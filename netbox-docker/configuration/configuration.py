@@ -55,19 +55,28 @@ DATABASE = {
 # to use two separate database IDs.
 REDIS = {
     'tasks': {
-        'HOST': environ.get('REDIS_HOST', 'localhost'),
-        'PORT': int(environ.get('REDIS_PORT', 6379)),
+        'SENTINELS': [
+			(environ.get('REDIS_HOST', 'localhost'), int(environ.get('REDIS_PORT', 26379))),
+			(environ.get('REDIS_HOST_1', 'localhost'), int(environ.get('REDIS_PORT', 26379))),
+			(environ.get('REDIS_HOST_2', 'localhost'), int(environ.get('REDIS_PORT', 26379)))
+		],
+        'SENTINEL_SERVICE': 'mymaster',
         'PASSWORD': _read_secret('redis_password', environ.get('REDIS_PASSWORD', '')),
         'DATABASE': int(environ.get('REDIS_DATABASE', 0)),
         'SSL': environ.get('REDIS_SSL', 'False').lower() == 'true',
     },
     'caching': {
-        'HOST': environ.get('REDIS_CACHE_HOST', environ.get('REDIS_HOST', 'localhost')),
-        'PORT': int(environ.get('REDIS_CACHE_PORT', environ.get('REDIS_PORT', 6379))),
+        'SENTINELS': [
+            (environ.get('REDIS_HOST', 'localhost'), int(environ.get('REDIS_PORT', 26379))),
+            (environ.get('REDIS_CACHE_HOST', 'localhost'), int(environ.get('REDIS_CACHE_PORT', environ.get('REDIS_PORT', 26379)))),
+			(environ.get('REDIS_CACHE_HOST_1', 'localhost'), int(environ.get('REDIS_CACHE_PORT', environ.get('REDIS_PORT', 26379)))),
+			(environ.get('REDIS_CACHE_HOST_2', 'localhost'), int(environ.get('REDIS_CACHE_PORT', environ.get('REDIS_PORT', 26379))))
+        ],
+        'SENTINEL_SERVICE': 'mymaster',
         'PASSWORD': _read_secret('redis_cache_password', environ.get('REDIS_CACHE_PASSWORD', environ.get('REDIS_PASSWORD', ''))),
         'DATABASE': int(environ.get('REDIS_CACHE_DATABASE', 1)),
         'SSL': environ.get('REDIS_CACHE_SSL', environ.get('REDIS_SSL', 'False')).lower() == 'true',
-    },
+    }
 }
 
 # This key is used for secure generation of random numbers and strings. It must never be exposed outside of this file.

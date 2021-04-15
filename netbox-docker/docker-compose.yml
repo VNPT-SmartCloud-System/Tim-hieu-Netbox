@@ -4,8 +4,8 @@ services:
     image: netboxcommunity/netbox:${VERSION-latest}
     depends_on:
     - pgpool
-    - redis
-    - redis-cache
+    - redis-sentinel
+    - redis-sentinel-cache
     - netbox-worker
     env_file: env/netbox.env
     user: '101'
@@ -32,59 +32,50 @@ services:
 
   # postgres
   pg-0:
-    image: docker.io/bitnami/postgresql-repmgr:11
+    image: docker.io/bitnami/postgresql-repmgr:13
     ports:
       - 5432
     volumes:
       - pg_0_data:/bitnami/postgresql
-    deploy:
-      placement:
-        constraints: [node.hostname == node1]
     environment:
       - POSTGRESQL_POSTGRES_PASSWORD=adminpassword
       - POSTGRESQL_USERNAME=customuser
       - POSTGRESQL_PASSWORD=custompassword
-      - POSTGRESQL_DATABASE=customdatabase
+      - POSTGRESQL_DATABASE=netbox
       - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
       - REPMGR_PASSWORD=repmgrpassword
       - REPMGR_PRIMARY_HOST=pg-0
-      - REPMGR_PARTNER_NODES=pg-0,pg-1,pg2
+      - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
       - REPMGR_NODE_NAME=pg-0
       - REPMGR_NODE_NETWORK_NAME=pg-0
   pg-1:
-    image: docker.io/bitnami/postgresql-repmgr:11
+    image: docker.io/bitnami/postgresql-repmgr:13
     ports:
       - 5432
     volumes:
       - pg_1_data:/bitnami/postgresql
-    deploy:
-      placement:
-        constraints: [node.hostname == node2]
     environment:
       - POSTGRESQL_POSTGRES_PASSWORD=adminpassword
       - POSTGRESQL_USERNAME=customuser
       - POSTGRESQL_PASSWORD=custompassword
-      - POSTGRESQL_DATABASE=customdatabase
+      - POSTGRESQL_DATABASE=netbox
       - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
       - REPMGR_PASSWORD=repmgrpassword
       - REPMGR_PRIMARY_HOST=pg-0
-      - REPMGR_PARTNER_NODES=pg-0,pg-1,pg2
+      - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
       - REPMGR_NODE_NAME=pg-1
       - REPMGR_NODE_NETWORK_NAME=pg-1
   pg-2:
-    image: docker.io/bitnami/postgresql-repmgr:11
+    image: docker.io/bitnami/postgresql-repmgr:13
     ports:
       - 5432
     volumes:
-      - pg_2_data:/bitnami/postgresql
-    deploy:
-      placement:
-        constraints: [node.hostname == node3]
+      - pg_1_data:/bitnami/postgresql
     environment:
       - POSTGRESQL_POSTGRES_PASSWORD=adminpassword
       - POSTGRESQL_USERNAME=customuser
       - POSTGRESQL_PASSWORD=custompassword
-      - POSTGRESQL_DATABASE=customdatabase
+      - POSTGRESQL_DATABASE=netbox
       - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
       - REPMGR_PASSWORD=repmgrpassword
       - REPMGR_PRIMARY_HOST=pg-0
@@ -95,6 +86,10 @@ services:
     image: docker.io/bitnami/pgpool:4
     ports:
       - 5432:5432
+    depends_on:
+      - pg-0
+      - pg-1
+      - pg-2
     environment:
       - PGPOOL_BACKEND_NODES=0:pg-0:5432,1:pg-1:5432,2:pg-2:5432
       - PGPOOL_SR_CHECK_USER=customuser
@@ -111,22 +106,183 @@ services:
       timeout: 5s
       retries: 5
   # redis
+
   redis:
-    image: redis:6-alpine
-    command:
-    - sh
-    - -c # this is to evaluate the $REDIS_PASSWORD from the env
-    - redis-server --appendonly yes --requirepass $$REDIS_PASSWORD ## $$ because of docker-compose
-    env_file: env/redis.env
+    image: 'bitnami/redis:latest'
+    deploy:
+      placement:
+        constraints: [node.hostname == docker1]
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_PASSWORD=Viethung1008@
     volumes:
-    - netbox-redis-data:/data
-  redis-cache:
-    image: redis:6-alpine
-    command:
-    - sh
-    - -c # this is to evaluate the $REDIS_PASSWORD from the env
-    - redis-server --requirepass $$REDIS_PASSWORD ## $$ because of docker-compose
-    env_file: env/redis-cache.env
+    - netbox-redis-data:/bitnami/redis/data
+
+  redis-slave-0:
+    image: 'bitnami/redis:latest'
+    deploy:
+      placement:
+        constraints: [node.hostname == docker2]
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_PASSWORD=Viethung1008@
+    ports:
+      - '6379'
+    depends_on:
+      - redis
+    volumes:
+    - netbox-redis_0-data:/bitnami/redis/data
+
+  redis-slave-1:
+    image: 'bitnami/redis:latest'
+    deploy:
+      placement:
+        constraints: [node.hostname == docker3]
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_PASSWORD=Viethung1008@
+    ports:
+      - '6379'
+    depends_on:
+      - redis
+    volumes:
+    - netbox-redis_1-data:/bitnami/redis/data
+  
+  redis-sentinel:
+    image: 'bitnami/redis-sentinel:latest'
+    deploy:
+      placement:
+        constraints: [node.hostname == docker1]
+    environment:
+      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
+    depends_on:
+      - redis
+      - redis-slave-0
+      - redis-slave-1
+    ports:
+      - '26379:26379'
+  redis-sentinel-1:
+    image: 'bitnami/redis-sentinel:latest'
+    deploy:
+      placement:
+        constraints: [node.hostname == docker2]
+    environment:
+      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
+    depends_on:
+      - redis
+      - redis-slave-0
+      - redis-slave-1
+    ports:
+      - '26380:26379'
+
+  redis-sentinel-2:
+    image: 'bitnami/redis-sentinel:latest'
+    deploy:
+      placement:
+        constraints: [node.hostname == docker3]
+    environment:
+      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
+    depends_on:
+      - redis
+      - redis-slave-0
+      - redis-slave-1
+    ports:
+      - '26381:26379'
+# redis cache 
+  redis-cache-master:
+    image: 'bitnami/redis:latest'
+    deploy:
+      placement:
+        constraints: [node.hostname == docker1]
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_PASSWORD=Viethung1008@
+
+  redis-cache-slave-1:
+    image: 'bitnami/redis:latest'
+    deploy:
+      placement:
+        constraints: [node.hostname == docker2]
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-cache-master
+      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_PASSWORD=Viethung1008@
+    ports:
+      - '6379'
+    depends_on:
+      - redis-cache-master
+
+  redis-cache-slave-0:
+    image: 'bitnami/redis:latest'
+    deploy:
+      placement:
+        constraints: [node.hostname == docker3]
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-cache-master
+      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_PASSWORD=Viethung1008@
+    ports:
+      - '6379'
+    depends_on:
+      - redis-cache-master
+
+  redis-sentinel-cache:
+    image: 'bitnami/redis-sentinel:latest'
+    deploy:
+      placement:
+        constraints: [node.hostname == docker1]
+    environment:
+      - REDIS_MASTER_HOST=redis-cache-master
+      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
+    depends_on:
+      - redis-cache-master
+      - redis-cache-slave-0
+      - redis-cache-slave-1
+    ports:
+      - '26382:26379'
+  redis-sentinel-cache-1:
+    image: 'bitnami/redis-sentinel:latest'
+    deploy:
+      placement:
+        constraints: [node.hostname == docker2]
+    environment:
+      - REDIS_MASTER_HOST=redis-cache-master
+      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
+    depends_on:
+      - redis-cache-master
+      - redis-cache-slave-0
+      - redis-cache-slave-1
+    ports:
+      - '26383:26379'
+  redis-sentinel-cache-2:
+    image: 'bitnami/redis-sentinel:latest'
+    deploy:
+      placement:
+        constraints: [node.hostname == docker3]
+    environment:
+      - REDIS_MASTER_HOST=redis-cache-master
+      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
+    depends_on:
+      - redis-cache-master
+      - redis-cache-slave-0
+      - redis-cache-slave-1
+    ports:
+      - '26384:26379'
 
 volumes:
   netbox-media-files:
@@ -142,4 +298,10 @@ volumes:
   pg_2_data:
     driver: local
   netbox-config:
+    driver: local
+  netbox-redis-data:
+    driver: local
+  netbox-redis_0-data:
+    driver: local
+  netbox-redis_1-data:
     driver: local
