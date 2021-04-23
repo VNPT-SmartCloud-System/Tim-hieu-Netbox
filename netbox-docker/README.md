@@ -4,11 +4,19 @@ Repo này chứa các thành phần cần thiết để xây dựng 1 cụm clus
 
 ## Quickstart
 
-Để bắt đầu thiết lập, trước tiên cần có 1 cụm docker swarm từ 2 node trở lên. Sau đó hãy tiến hành làm theo các bước sau: 
+Để bắt đầu thiết lập, trước tiên cần có 1 cụm docker swarm gồm 3 node trở lên. Sau đó hãy tiến hành làm theo các bước sau: 
 
-```bash
+Trên mỗi node hãy thực hiện như sau: 
+
+```
+cd /opt
 git clone https://github.com/hungviet99/Tim-hieu-Netbox.git
-cd ./Tim-hieu-Netbox/netbox-docker
+```
+
+Sau đó đứng ở node master và triển khai netbox: 
+
+```
+cd /opt/Tim-hieu-Netbox/netbox-docker
 tee docker-compose.override.yml <<EOF
 version: '3.4'
 services:

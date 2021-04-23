@@ -1,7 +1,7 @@
 version: '3.4'
 services:
   netbox: &netbox
-    image: netboxcommunity/netbox:${VERSION-latest}
+    image: netboxcommunity/netbox:v2.10
     deploy:
       placement:
         constraints: [node.hostname == docker1]
@@ -35,7 +35,7 @@ services:
     - rqworker
     ports: []
   netbox1: &netbox1
-    image: netboxcommunity/netbox:${VERSION-latest}
+    image: netboxcommunity/netbox:v2.10
     deploy:
       placement:
         constraints: [node.hostname == docker2]
@@ -59,7 +59,7 @@ services:
   netbox-worker1:
     <<: *netbox1
     depends_on:
-    - redis
+    - redis-master
     - redis-slave-0
     - redis-slave-1
     entrypoint:
@@ -69,7 +69,7 @@ services:
     - rqworker
     ports: []
   netbox2: &netbox2
-    image: netboxcommunity/netbox:${VERSION-latest}
+    image: netboxcommunity/netbox:v2.10
     deploy:
       placement:
         constraints: [node.hostname == docker3]
@@ -91,9 +91,9 @@ services:
     ports:
     - "8080"
   netbox-worker2:
-    <<: *netbox
+    <<: *netbox2
     depends_on:
-    - redis
+    - redis-master
     - redis-slave-0
     - redis-slave-1
     entrypoint:
@@ -109,7 +109,7 @@ services:
       placement:
         constraints: [node.hostname == docker1]
     ports:
-      - 5432
+      - 5435:5432
     volumes:
       - pg_0_data:/bitnami/postgresql
     environment:
@@ -129,7 +129,7 @@ services:
       placement:
         constraints: [node.hostname == docker2]
     ports:
-      - 5432
+      - 5436:5432
     volumes:
       - pg_1_data:/bitnami/postgresql
     environment:
@@ -149,7 +149,7 @@ services:
       placement:
         constraints: [node.hostname == docker3]
     ports:
-      - 5432
+      - 5437:5432
     volumes:
       - pg_1_data:/bitnami/postgresql
     environment:
@@ -163,7 +163,7 @@ services:
       - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
       - REPMGR_NODE_NAME=pg-2
       - REPMGR_NODE_NETWORK_NAME=pg-2
-  pgpool:
+  pgpool-0:
     image: docker.io/bitnami/pgpool:4
     deploy:
       placement:
@@ -242,8 +242,8 @@ services:
       timeout: 5s
       retries: 5
   # redis
-  redis:
-    image: 'bitnami/redis:latest'
+  redis-master:
+    image: 'bitnami/redis:6.2'
     deploy:
       placement:
         constraints: [node.hostname == docker1]
@@ -251,16 +251,16 @@ services:
       - REDIS_REPLICATION_MODE=master
       - REDIS_PASSWORD=Viethung1008@
     volumes:
-    - netbox-redis-data:/bitnami/redis/data
+    - netbox-redis-master-data:/bitnami/redis/data
 
   redis-slave-0:
-    image: 'bitnami/redis:latest'
+    image: 'bitnami/redis:6.2'
     deploy:
       placement:
         constraints: [node.hostname == docker2]
     environment:
       - REDIS_REPLICATION_MODE=slave
-      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_HOST=redis-master
       - REDIS_MASTER_PASSWORD=Viethung1008@
       - REDIS_PASSWORD=Viethung1008@
     ports:
@@ -271,13 +271,13 @@ services:
     - netbox-redis_0-data:/bitnami/redis/data
 
   redis-slave-1:
-    image: 'bitnami/redis:latest'
+    image: 'bitnami/redis:6.2'
     deploy:
       placement:
         constraints: [node.hostname == docker3]
     environment:
       - REDIS_REPLICATION_MODE=slave
-      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_HOST=redis-master
       - REDIS_MASTER_PASSWORD=Viethung1008@
       - REDIS_PASSWORD=Viethung1008@
     ports:
@@ -288,54 +288,54 @@ services:
     - netbox-redis_1-data:/bitnami/redis/data
   
   redis-sentinel:
-    image: 'bitnami/redis-sentinel:latest'
+    image: 'bitnami/redis-sentinel:6.2'
     deploy:
       placement:
         constraints: [node.hostname == docker1]
     environment:
-      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_HOST=redis-master
       - REDIS_MASTER_PASSWORD=Viethung1008@
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
-      - redis
+      - redis-master
       - redis-slave-0
       - redis-slave-1
     ports:
       - '26379:26379'
   redis-sentinel-1:
-    image: 'bitnami/redis-sentinel:latest'
+    image: 'bitnami/redis-sentinel:6.2'
     deploy:
       placement:
         constraints: [node.hostname == docker2]
     environment:
-      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_HOST=redis-master
       - REDIS_MASTER_PASSWORD=Viethung1008@
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
-      - redis
+      - redis-master
       - redis-slave-0
       - redis-slave-1
     ports:
       - '26380:26379'
 
   redis-sentinel-2:
-    image: 'bitnami/redis-sentinel:latest'
+    image: 'bitnami/redis-sentinel:6.2'
     deploy:
       placement:
         constraints: [node.hostname == docker3]
     environment:
-      - REDIS_MASTER_HOST=redis
+      - REDIS_MASTER_HOST=redis-master
       - REDIS_MASTER_PASSWORD=Viethung1008@
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
-      - redis
+      - redis-master
       - redis-slave-0
       - redis-slave-1
     ports:
       - '26381:26379'
 # redis cache 
   redis-cache-master:
-    image: 'bitnami/redis:latest'
+    image: 'bitnami/redis:6.2'
     deploy:
       placement:
         constraints: [node.hostname == docker1]
@@ -343,8 +343,8 @@ services:
       - REDIS_REPLICATION_MODE=master
       - REDIS_PASSWORD=Viethung1008@
 
-  redis-cache-slave-1:
-    image: 'bitnami/redis:latest'
+  redis-cache-slave-0:
+    image: 'bitnami/redis:6.2'
     deploy:
       placement:
         constraints: [node.hostname == docker2]
@@ -358,8 +358,8 @@ services:
     depends_on:
       - redis-cache-master
 
-  redis-cache-slave-0:
-    image: 'bitnami/redis:latest'
+  redis-cache-slave-1:
+    image: 'bitnami/redis:6.2'
     deploy:
       placement:
         constraints: [node.hostname == docker3]
@@ -374,7 +374,7 @@ services:
       - redis-cache-master
 
   redis-sentinel-cache:
-    image: 'bitnami/redis-sentinel:latest'
+    image: 'bitnami/redis-sentinel:6.2'
     deploy:
       placement:
         constraints: [node.hostname == docker1]
@@ -389,7 +389,7 @@ services:
     ports:
       - '26382:26379'
   redis-sentinel-cache-1:
-    image: 'bitnami/redis-sentinel:latest'
+    image: 'bitnami/redis-sentinel:6.2'
     deploy:
       placement:
         constraints: [node.hostname == docker2]
@@ -404,7 +404,7 @@ services:
     ports:
       - '26383:26379'
   redis-sentinel-cache-2:
-    image: 'bitnami/redis-sentinel:latest'
+    image: 'bitnami/redis-sentinel:6.2'
     deploy:
       placement:
         constraints: [node.hostname == docker3]
@@ -422,15 +422,13 @@ services:
 volumes:
   netbox-postgres-data:
     driver: local
-  netbox-redis-data:
-    driver: local
   pg_0_data:
     driver: local
   pg_1_data:
     driver: local
   pg_2_data:
     driver: local
-  netbox-redis-data:
+  netbox-redis-master-data:
     driver: local
   netbox-redis_0-data:
     driver: local
