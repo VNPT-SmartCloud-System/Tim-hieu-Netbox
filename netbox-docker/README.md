@@ -15,6 +15,12 @@ services:
   netbox:
     ports:
       - 8000:8080
+  netbox1:
+    ports:
+      - 8001:8080
+  netbox2:
+    ports:
+      - 8002:8080
 EOF
 docker-compose pull
 docker stack deploy -c docker-compose.yml -c docker-compose.override.yml netbox
