@@ -6,7 +6,7 @@ Repo này chứa các thành phần cần thiết để xây dựng 1 cụm clus
 
 Để bắt đầu thiết lập, trước tiên cần có 1 cụm docker swarm từ 2 node trở lên. Sau đó hãy tiến hành làm theo các bước sau: 
 
-- Trên mỗi node hãy thực hiện như sau: 
+### Bước 1: Trên mỗi node hãy thực hiện như sau: 
 
 ```
 cd /opt
@@ -44,9 +44,11 @@ docker stack deploy -c docker-compose.yml -c docker-compose.override.yml netbox
 
 **Lưu ý:** Ta có các file để cấu hình domain trong thư mục `/opt/Tim-hieu-Netbox/netbox-docker/nginx-cert`. Nên cần phải sửa địa chỉ IP của từng host và tên domain sẽ sử dụng cho netbox tại đây. 
 
+### Bước 2: Chỉnh cấu hình config domain 
+
 Ta có 3 file domain là `domain1`, `domain2`, `domain3`. Ta lần lượt sửa tên domain sẽ sử dụng cho netbox như sau: 
 
-**Node1**
+- **Node1**
 
 ```
 sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf
@@ -55,7 +57,7 @@ sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /
 sed -i 's/        proxy_pass http://10.10.35.191:8000;/        proxy_pass http://<IP_NODE_1>:8000;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf
 ```
 
-**Node2**
+- **Node2**
 
 ```
 sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain2.conf
@@ -64,7 +66,7 @@ sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /
 sed -i 's/        proxy_pass http://10.10.35.192:8001;/        proxy_pass http://<IP_NODE_2>:8001;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain2.conf
 ```
 
-**Node3**
+- **Node3**
 
 ```
 sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain3.conf
@@ -73,27 +75,27 @@ sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /
 sed -i 's/        proxy_pass http://10.10.10.193:8002;/        proxy_pass http://<IP_NODE_3>:8002;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain3.conf
 ```
 
-- Sau khi sửa cấu hình domain, tiếp theo tiến hành copy file config domain. 
+### Bước 3: Copy file config domain name vào container.  
 
-**Node1**
+- **Node1**
 
 ```
 cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
 ```
 
-**Node2**
+- **Node2**
 
 ```
 cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain2.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
 ```
 
-**Node3**
+- **Node3**
 
 ```
 cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain3.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
 ```
 
-- Thực hiện chuyển thư mục ssl phòng khi cần sử dụng ssl. 
+### Bước 4: Thực hiện chuyển thư mục ssl phòng khi cần sử dụng ssl. 
 
 ```
 mv /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/ssl /var/lib/docker/volumes/netbox_etc-nginx/_data/
@@ -106,6 +108,8 @@ docker service update netbox_nginx-revserse1
 docker service update netbox_nginx-revserse2
 docker service update netbox_nginx-revserse3
 ```
+
+### Bước 5: Kiểm tra 
 
 Sau 1 vài phút toàn bộ ứng dụng được triển khai sẽ khả dụng. Mở trình duyệt và truy cập vào url `http://<DOMAIN_NAME_NETBOX>:8000/` để vào trang chủ netbox. Có thể đăng nhập ở góc bên phải với thông tin đăng nhập mặc định là: 
 
