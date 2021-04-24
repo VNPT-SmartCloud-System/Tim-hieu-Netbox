@@ -6,7 +6,7 @@ services:
       placement:
         constraints: [node.hostname == docker1]
     depends_on:
-    - pgpool
+    - pgpool-0
     - redis-sentinel
     - redis-sentinel-cache
     - netbox-worker
@@ -20,12 +20,13 @@ services:
     - ./scripts:/etc/netbox/scripts:z,ro
     - netbox-media-files:/opt/netbox/netbox/media:z
     - netbox-config:/etc/netbox:z
+    - netbox-static:/opt/netbox/netbox/static/:z
     ports:
     - "8080"
   netbox-worker:
     <<: *netbox
     depends_on:
-    - redis
+    - redis-master
     - redis-slave-0
     - redis-slave-1
     entrypoint:
@@ -266,7 +267,7 @@ services:
     ports:
       - '6379'
     depends_on:
-      - redis
+      - redis-master
     volumes:
     - netbox-redis_0-data:/bitnami/redis/data
 
@@ -283,7 +284,7 @@ services:
     ports:
       - '6379'
     depends_on:
-      - redis
+      - redis-master
     volumes:
     - netbox-redis_1-data:/bitnami/redis/data
   
@@ -418,7 +419,20 @@ services:
       - redis-cache-slave-1
     ports:
       - '26384:26379'
-
+  nginx-revserse: 
+    image: 'nginx:1.20'
+    deploy:
+      placement:
+        constraints: [node.hostname == docker1]
+    depends_on:
+      - netbox
+    volumes:
+    - netbox-static:/opt/netbox/netbox/static/:z,ro
+    - etc-nginx:/etc/nginx
+    ports:
+    - "80:80"
+    - "443:443"
+  
 volumes:
   netbox-postgres-data:
     driver: local
@@ -445,4 +459,8 @@ volumes:
   netbox-media-files2:
     driver: local
   netbox-config2:
+    driver: local
+  netbox-static:
+    driver: local
+  etc-nginx:
     driver: local
