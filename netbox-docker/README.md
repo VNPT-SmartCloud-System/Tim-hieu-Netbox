@@ -19,10 +19,11 @@ git clone https://github.com/hungviet99/Tim-hieu-Netbox.git
 cd /opt/Tim-hieu-Netbox/netbox-docker
 ```
 ```
-echo "ALLOWED_HOSTS=<DOMAIN_NAME_NETBOX> <IP_NODE_1>" >> /opt/Tim-hieu-Netbox/netbox-docker/netbox1.env
-echo "ALLOWED_HOSTS=<DOMAIN_NAME_NETBOX> <IP_NODE_2>" >> /opt/Tim-hieu-Netbox/netbox-docker/netbox2.env
-echo "ALLOWED_HOSTS=<DOMAIN_NAME_NETBOX> <IP_NODE_3>" >> /opt/Tim-hieu-Netbox/netbox-docker/netbox3.env
+echo "ALLOWED_HOSTS=<DOMAIN_NAME_NETBOX> <IP_NODE_1>" >> /opt/Tim-hieu-Netbox/netbox-docker/env/netbox.env
+echo "ALLOWED_HOSTS=<DOMAIN_NAME_NETBOX> <IP_NODE_2>" >> /opt/Tim-hieu-Netbox/netbox-docker/env/netbox1.env
+echo "ALLOWED_HOSTS=<DOMAIN_NAME_NETBOX> <IP_NODE_3>" >> /opt/Tim-hieu-Netbox/netbox-docker/env/netbox2.env
 ```
+
 > Thay <DOMAIN_NAME_NETBOX> <IP_NODE_1,2,3> bằng tên domain dùng cho netbox và IP tương ứng của từng node. 
 
 ```
@@ -80,25 +81,38 @@ sed -i 's/        proxy_pass http://10.10.10.193:8002;/        proxy_pass http:/
 - **Node1**
 
 ```
-cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
+cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf /var/lib/docker/volumes/netbox_etc-nginx1/_data/conf.d/<DOMAIN_NAME>.conf
 ```
 
 - **Node2**
 
 ```
-cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain2.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
+cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain2.conf /var/lib/docker/volumes/netbox_etc-nginx2/_data/conf.d/<DOMAIN_NAME>.conf
 ```
 
 - **Node3**
 
 ```
-cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain3.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
+cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain3.conf /var/lib/docker/volumes/netbox_etc-nginx3/_data/conf.d/<DOMAIN_NAME>.conf
 ```
 
 ### Bước 4: Thực hiện chuyển thư mục ssl phòng khi cần sử dụng ssl. 
 
+- **Node1**
+
 ```
-mv /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/ssl /var/lib/docker/volumes/netbox_etc-nginx/_data/
+mv /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/ssl /var/lib/docker/volumes/netbox_etc-nginx1/_data/
+```
+- **Node2**
+
+```
+mv /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/ssl /var/lib/docker/volumes/netbox_etc-nginx2/_data/
+```
+
+- **Node3**
+
+```
+mv /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/ssl /var/lib/docker/volumes/netbox_etc-nginx3/_data/
 ```
 
 - Khởi động lại service
