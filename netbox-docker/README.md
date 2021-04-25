@@ -125,7 +125,7 @@ docker service update netbox_nginx-revserse3
 
 ### Bước 5: Kiểm tra 
 
-Sau 1 vài phút toàn bộ ứng dụng được triển khai sẽ khả dụng. Mở trình duyệt và truy cập vào url `http://<DOMAIN_NAME_NETBOX>:8000/` để vào trang chủ netbox. Có thể đăng nhập ở góc bên phải với thông tin đăng nhập mặc định là: 
+Sau 1 vài phút toàn bộ ứng dụng được triển khai sẽ khả dụng. Mở trình duyệt và truy cập vào url `http://<DOMAIN_NAME_NETBOX>:8081/` để vào trang chủ netbox. Có thể đăng nhập ở góc bên phải với thông tin đăng nhập mặc định là:
 
 * Username: **admin**
 * Password: **admin**
