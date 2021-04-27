@@ -127,6 +127,7 @@ Tiếp theo ta sẽ cài đặt keepalived:
 
 ```
 docker run -d --name keepalived -e KEEPALIVED_PRIORITY=98 \
+--restart always \
 -e KEEPALIVED_VIRTUAL_IP=10.10.35.197 \
 -e KEEPALIVED_PASSWORD=Password \
 --net=host --privileged=true angelnu/keepalived
@@ -136,6 +137,7 @@ docker run -d --name keepalived -e KEEPALIVED_PRIORITY=98 \
 
 ```
 docker run -d --name keepalived -e KEEPALIVED_PRIORITY=99 \
+--restart always \
 -e KEEPALIVED_VIRTUAL_IP=10.10.35.197 \
 -e KEEPALIVED_PASSWORD=Password \
 --net=host --privileged=true angelnu/keepalived
@@ -145,6 +147,7 @@ docker run -d --name keepalived -e KEEPALIVED_PRIORITY=99 \
 
 ```
 docker run -d --name keepalived -e KEEPALIVED_PRIORITY=100 \
+--restart always \
 -e KEEPALIVED_VIRTUAL_IP=10.10.35.197 \
 -e KEEPALIVED_PASSWORD=Password \
 --net=host --privileged=true angelnu/keepalived
