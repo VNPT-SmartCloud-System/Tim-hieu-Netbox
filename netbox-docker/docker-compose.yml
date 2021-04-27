@@ -20,7 +20,7 @@ services:
     - ./scripts:/etc/netbox/scripts:z,ro
     - netbox-media-files:/opt/netbox/netbox/media:z
     - netbox-config:/etc/netbox:z
-    - netbox-static1:/opt/netbox/netbox/static/:z
+    - netbox-static:/opt/netbox/netbox/static/:z
     ports:
     - "8080"
   netbox-worker:
@@ -55,7 +55,7 @@ services:
     - ./scripts:/etc/netbox/scripts:z,ro
     - netbox-media-files1:/opt/netbox/netbox/media:z
     - netbox-config1:/etc/netbox:z
-    - netbox-static2:/opt/netbox/netbox/static/:z
+    - netbox-static:/opt/netbox/netbox/static/:z
     ports:
     - "8080"
   netbox-worker1:
@@ -90,7 +90,7 @@ services:
     - ./scripts:/etc/netbox/scripts:z,ro
     - netbox-media-files2:/opt/netbox/netbox/media:z
     - netbox-config2:/etc/netbox:z
-    - netbox-static3:/opt/netbox/netbox/static/:z
+    - netbox-static:/opt/netbox/netbox/static/:z
     ports:
     - "8080"
   netbox-worker2:
@@ -116,7 +116,7 @@ services:
     volumes:
       - pg_0_data:/bitnami/postgresql
     environment:
-      - POSTGRESQL_POSTGRES_PASSWORD=adminpassword
+      - POSTGRESQL_POSTGRES_PASSWORD=StrongPass@123
       - POSTGRESQL_USERNAME=customuser
       - POSTGRESQL_PASSWORD=custompassword
       - POSTGRESQL_DATABASE=netbox
@@ -136,7 +136,7 @@ services:
     volumes:
       - pg_1_data:/bitnami/postgresql
     environment:
-      - POSTGRESQL_POSTGRES_PASSWORD=adminpassword
+      - POSTGRESQL_POSTGRES_PASSWORD=StrongPass@123
       - POSTGRESQL_USERNAME=customuser
       - POSTGRESQL_PASSWORD=custompassword
       - POSTGRESQL_DATABASE=netbox
@@ -156,7 +156,7 @@ services:
     volumes:
       - pg_1_data:/bitnami/postgresql
     environment:
-      - POSTGRESQL_POSTGRES_PASSWORD=adminpassword
+      - POSTGRESQL_POSTGRES_PASSWORD=StrongPass@123
       - POSTGRESQL_USERNAME=customuser
       - POSTGRESQL_PASSWORD=custompassword
       - POSTGRESQL_DATABASE=netbox
@@ -183,9 +183,9 @@ services:
       - PGPOOL_SR_CHECK_PASSWORD=custompassword
       - PGPOOL_ENABLE_LDAP=no
       - PGPOOL_POSTGRES_USERNAME=postgres
-      - PGPOOL_POSTGRES_PASSWORD=adminpassword
+      - PGPOOL_POSTGRES_PASSWORD=StrongPass@123
       - PGPOOL_ADMIN_USERNAME=admin
-      - PGPOOL_ADMIN_PASSWORD=adminpassword
+      - PGPOOL_ADMIN_PASSWORD=StrongPass@123
       - PGPOOL_ENABLE_LOAD_BALANCING=yes
     healthcheck:
       test: ["CMD", "/opt/bitnami/scripts/pgpool/healthcheck.sh"]
@@ -209,9 +209,9 @@ services:
       - PGPOOL_SR_CHECK_PASSWORD=custompassword
       - PGPOOL_ENABLE_LDAP=no
       - PGPOOL_POSTGRES_USERNAME=postgres
-      - PGPOOL_POSTGRES_PASSWORD=adminpassword
+      - PGPOOL_POSTGRES_PASSWORD=StrongPass@123
       - PGPOOL_ADMIN_USERNAME=admin
-      - PGPOOL_ADMIN_PASSWORD=adminpassword
+      - PGPOOL_ADMIN_PASSWORD=StrongPass@123
       - PGPOOL_ENABLE_LOAD_BALANCING=yes
     healthcheck:
       test: ["CMD", "/opt/bitnami/scripts/pgpool/healthcheck.sh"]
@@ -235,9 +235,9 @@ services:
       - PGPOOL_SR_CHECK_PASSWORD=custompassword
       - PGPOOL_ENABLE_LDAP=no
       - PGPOOL_POSTGRES_USERNAME=postgres
-      - PGPOOL_POSTGRES_PASSWORD=adminpassword
+      - PGPOOL_POSTGRES_PASSWORD=StrongPass@123
       - PGPOOL_ADMIN_USERNAME=admin
-      - PGPOOL_ADMIN_PASSWORD=adminpassword
+      - PGPOOL_ADMIN_PASSWORD=StrongPass@123
       - PGPOOL_ENABLE_LOAD_BALANCING=yes
     healthcheck:
       test: ["CMD", "/opt/bitnami/scripts/pgpool/healthcheck.sh"]
@@ -252,7 +252,7 @@ services:
         constraints: [node.hostname == docker1]
     environment:
       - REDIS_REPLICATION_MODE=master
-      - REDIS_PASSWORD=Viethung1008@
+      - REDIS_PASSWORD=StrongPass@123
     volumes:
     - netbox-redis-master-data:/bitnami/redis/data
 
@@ -264,8 +264,8 @@ services:
     environment:
       - REDIS_REPLICATION_MODE=slave
       - REDIS_MASTER_HOST=redis-master
-      - REDIS_MASTER_PASSWORD=Viethung1008@
-      - REDIS_PASSWORD=Viethung1008@
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_PASSWORD=StrongPass@123
     ports:
       - '6379'
     depends_on:
@@ -281,8 +281,8 @@ services:
     environment:
       - REDIS_REPLICATION_MODE=slave
       - REDIS_MASTER_HOST=redis-master
-      - REDIS_MASTER_PASSWORD=Viethung1008@
-      - REDIS_PASSWORD=Viethung1008@
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_PASSWORD=StrongPass@123
     ports:
       - '6379'
     depends_on:
@@ -297,7 +297,7 @@ services:
         constraints: [node.hostname == docker1]
     environment:
       - REDIS_MASTER_HOST=redis-master
-      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
       - redis-master
@@ -312,7 +312,7 @@ services:
         constraints: [node.hostname == docker2]
     environment:
       - REDIS_MASTER_HOST=redis-master
-      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
       - redis-master
@@ -328,7 +328,7 @@ services:
         constraints: [node.hostname == docker3]
     environment:
       - REDIS_MASTER_HOST=redis-master
-      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
       - redis-master
@@ -344,7 +344,7 @@ services:
         constraints: [node.hostname == docker1]
     environment:
       - REDIS_REPLICATION_MODE=master
-      - REDIS_PASSWORD=Viethung1008@
+      - REDIS_PASSWORD=StrongPass@123
 
   redis-cache-slave-0:
     image: 'bitnami/redis:6.2'
@@ -354,8 +354,8 @@ services:
     environment:
       - REDIS_REPLICATION_MODE=slave
       - REDIS_MASTER_HOST=redis-cache-master
-      - REDIS_MASTER_PASSWORD=Viethung1008@
-      - REDIS_PASSWORD=Viethung1008@
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_PASSWORD=StrongPass@123
     ports:
       - '6379'
     depends_on:
@@ -369,8 +369,8 @@ services:
     environment:
       - REDIS_REPLICATION_MODE=slave
       - REDIS_MASTER_HOST=redis-cache-master
-      - REDIS_MASTER_PASSWORD=Viethung1008@
-      - REDIS_PASSWORD=Viethung1008@
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_PASSWORD=StrongPass@123
     ports:
       - '6379'
     depends_on:
@@ -383,7 +383,7 @@ services:
         constraints: [node.hostname == docker1]
     environment:
       - REDIS_MASTER_HOST=redis-cache-master
-      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
       - redis-cache-master
@@ -398,7 +398,7 @@ services:
         constraints: [node.hostname == docker2]
     environment:
       - REDIS_MASTER_HOST=redis-cache-master
-      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
       - redis-cache-master
@@ -413,7 +413,7 @@ services:
         constraints: [node.hostname == docker3]
     environment:
       - REDIS_MASTER_HOST=redis-cache-master
-      - REDIS_MASTER_PASSWORD=Viethung1008@
+      - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
       - redis-cache-master
@@ -421,46 +421,17 @@ services:
       - redis-cache-slave-1
     ports:
       - '26384:26379'
-  nginx-revserse1: 
-    image: 'nginx:1.20'
+  nginx-reverse-lb:
+    image: nginx:1.20
     deploy:
-      placement:
-        constraints: [node.hostname == docker1]
-    depends_on:
-      - netbox
-    volumes:
-    - netbox-static1:/opt/netbox/netbox/static/:z,ro
-    - etc-nginx1:/etc/nginx
+      mode: global
     ports:
-    - "8081:80"
-    - "4431:443"
-  nginx-revserse2: 
-    image: 'nginx:1.20'
-    deploy:
-      placement:
-        constraints: [node.hostname == docker2]
-    depends_on:
-      - netbox1
+      - 80:80
+      - 443:443
     volumes:
-    - netbox-static2:/opt/netbox/netbox/static/:z,ro
-    - etc-nginx2:/etc/nginx
-    ports:
-    - "8082:80"
-    - "4432:443"
-  nginx-revserse3: 
-    image: 'nginx:1.20'
-    deploy:
-      placement:
-        constraints: [node.hostname == docker3]
-    depends_on:
-      - netbox2
-    volumes:
-    - netbox-static3:/opt/netbox/netbox/static/:z,ro
-    - etc-nginx3:/etc/nginx
-    ports:
-    - "8083:80"
-    - "4433:443"
-  
+    - netbox-static:/opt/netbox/netbox/static/:z,ro
+    - etc-nginx:/etc/nginx
+
 volumes:
   netbox-postgres-data:
     driver: local
@@ -488,15 +459,7 @@ volumes:
     driver: local
   netbox-config2:
     driver: local
-  netbox-static1:
+  netbox-static:
     driver: local
-  etc-nginx1:
-    driver: local
-  netbox-static2:
-    driver: local
-  etc-nginx2:
-    driver: local
-  netbox-static3:
-    driver: local
-  etc-nginx3:
+  etc-nginx:
     driver: local

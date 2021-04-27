@@ -54,17 +54,11 @@ Ta có 3 file domain là `domain1`, `domain2`, `domain3`. Ta lần lượt sửa
 ```
 sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf
 ```
-```
-sed -i 's/        proxy_pass http://10.10.35.191:8000;/        proxy_pass http://<IP_NODE_1>:8000;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf
-```
 
 - **Node2**
 
 ```
 sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain2.conf
-```
-```
-sed -i 's/        proxy_pass http://10.10.35.192:8001;/        proxy_pass http://<IP_NODE_2>:8001;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain2.conf
 ```
 
 - **Node3**
@@ -72,8 +66,13 @@ sed -i 's/        proxy_pass http://10.10.35.192:8001;/        proxy_pass http:/
 ```
 sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain3.conf
 ```
+
+- Thực hiện trên cả 3 node 
+
 ```
-sed -i 's/        proxy_pass http://10.10.10.193:8002;/        proxy_pass http://<IP_NODE_3>:8002;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain3.conf
+sed -i 's/    server 10.10.35.191:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_1>:8000 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf
+sed -i 's/    server 10.10.35.192:8001 max_fails=3 fail_timeout=5s;/    server <IP_NODE_2>:8001 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf
+sed -i 's/    server 10.10.35.193:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_3>:8002 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf
 ```
 
 ### Bước 3: Copy file config domain name vào container.  
@@ -81,51 +80,81 @@ sed -i 's/        proxy_pass http://10.10.10.193:8002;/        proxy_pass http:/
 - **Node1**
 
 ```
-cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf /var/lib/docker/volumes/netbox_etc-nginx1/_data/conf.d/<DOMAIN_NAME>.conf
+cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
 ```
 
 - **Node2**
 
 ```
-cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain2.conf /var/lib/docker/volumes/netbox_etc-nginx2/_data/conf.d/<DOMAIN_NAME>.conf
+cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain2.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
 ```
 
 - **Node3**
 
 ```
-cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain3.conf /var/lib/docker/volumes/netbox_etc-nginx3/_data/conf.d/<DOMAIN_NAME>.conf
+cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain3.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
 ```
 
 ### Bước 4: Thực hiện chuyển thư mục ssl phòng khi cần sử dụng ssl. 
 
-- **Node1**
+- Thực hiện trên cả 3 node
 
 ```
-mv /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/ssl /var/lib/docker/volumes/netbox_etc-nginx1/_data/
-```
-- **Node2**
-
-```
-mv /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/ssl /var/lib/docker/volumes/netbox_etc-nginx2/_data/
-```
-
-- **Node3**
-
-```
-mv /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/ssl /var/lib/docker/volumes/netbox_etc-nginx3/_data/
+mv /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/ssl /var/lib/docker/volumes/netbox_etc-nginx/_data/
 ```
 
 - Khởi động lại service
 
 ```
-docker service update netbox_nginx-revserse1
-docker service update netbox_nginx-revserse2
-docker service update netbox_nginx-revserse3
+docker service update netbox_nginx-reverse-lb
 ```
 
-### Bước 5: Kiểm tra 
+### Bước 6: Cài keppalived 
 
-Sau 1 vài phút toàn bộ ứng dụng được triển khai sẽ khả dụng. Mở trình duyệt và truy cập vào url `http://<DOMAIN_NAME_NETBOX>:8081/` để vào trang chủ netbox. Có thể đăng nhập ở góc bên phải với thông tin đăng nhập mặc định là:
+- Thực hiện trên cả 3 node:
+
+Cấu hình cho phép gắn địa chỉ ip ảo lên card mạng và IP forward
+
+```
+echo "net.ipv4.ip_nonlocal_bind = 1" >> /etc/sysctl.conf
+echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
+sysctl -p
+```
+
+Tiếp theo ta sẽ cài đặt keepalived: 
+
+- Thực hiện trên node 1: 
+
+```
+docker run -d --name keepalived -e KEEPALIVED_PRIORITY=98 \
+-e KEEPALIVED_VIRTUAL_IP=10.10.35.197 \
+-e KEEPALIVED_PASSWORD=Password \
+--net=host --privileged=true angelnu/keepalived
+```
+
+- Thực hiện trên node 2:
+
+```
+docker run -d --name keepalived -e KEEPALIVED_PRIORITY=99 \
+-e KEEPALIVED_VIRTUAL_IP=10.10.35.197 \
+-e KEEPALIVED_PASSWORD=Password \
+--net=host --privileged=true angelnu/keepalived
+```
+
+- Thực hiện trên node 3:
+
+```
+docker run -d --name keepalived -e KEEPALIVED_PRIORITY=100 \
+-e KEEPALIVED_VIRTUAL_IP=10.10.35.197 \
+-e KEEPALIVED_PASSWORD=Password \
+--net=host --privileged=true angelnu/keepalived
+```
+
+> Lưu ý: `10.10.35.197` là địa chỉ IP VIP, hãy chỉ định địa chỉ VIP theo địa chỉ của bạn. `Password` là keepalived pass, có thể sửa theo password mong muốn
+
+### Bước 6: Kiểm tra 
+
+Sau 1 vài phút toàn bộ ứng dụng được triển khai sẽ khả dụng. Mở trình duyệt và truy cập vào url `http://<DOMAIN_NAME_NETBOX>/` để vào trang chủ netbox. Có thể đăng nhập ở góc bên phải với thông tin đăng nhập mặc định là:
 
 * Username: **admin**
 * Password: **admin**
