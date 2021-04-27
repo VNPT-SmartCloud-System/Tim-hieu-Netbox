@@ -47,43 +47,14 @@ docker stack deploy -c docker-compose.yml -c docker-compose.override.yml netbox
 
 ### Bước 2: Chỉnh cấu hình config domain 
 
-Ta có 3 file domain là `domain1`, `domain2`, `domain3`. Ta lần lượt sửa tên domain sẽ sử dụng cho netbox như sau: 
-
-- Thực hiện trên cả 3 node
-```
-sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain.conf
-```
-
-
 - Thực hiện trên cả 3 node
 
 ```
-sed -i 's/    server 10.10.35.191:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_1>:8000 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain.conf
-sed -i 's/    server 10.10.35.192:8001 max_fails=3 fail_timeout=5s;/    server <IP_NODE_2>:8001 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain.conf
-sed -i 's/    server 10.10.35.193:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_3>:8002 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain.conf
+sed -i 's/    server 10.10.35.191:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_1>:8000 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/default.conf
+sed -i 's/    server 10.10.35.192:8001 max_fails=3 fail_timeout=5s;/    server <IP_NODE_2>:8001 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/default.conf
+sed -i 's/    server 10.10.35.193:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_3>:8002 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/default.conf
 ```
 
-### Bước 3: Copy file config domain name vào container.  
-
-- Thực hiện trên 3 node
-
-```
-cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
-```
-
-### Bước 4: Thực hiện chuyển thư mục ssl phòng khi cần sử dụng ssl. 
-
-- Thực hiện trên cả 3 node
-
-```
-mv /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/ssl /var/lib/docker/volumes/netbox_etc-nginx/_data/
-```
-
-- Khởi động lại service
-
-```
-docker service update netbox_nginx-reverse-lb
-```
 
 ### Bước 6: Cài keppalived 
 
@@ -102,8 +73,9 @@ Tiếp theo ta sẽ cài đặt keepalived:
 - Thực hiện trên node 1: 
 
 ```
-docker run -d --name keepalived -e KEEPALIVED_PRIORITY=98 \
---restart always \
+docker run -d --name keepalived --restart always \
+-e KEEPALIVED_PRIORITY=98 \
+-e HOST_IP=10.10.35.191 \
 -e KEEPALIVED_VIRTUAL_IP=10.10.35.197 \
 -e KEEPALIVED_PASSWORD=Password \
 --net=host --privileged=true angelnu/keepalived
@@ -112,8 +84,9 @@ docker run -d --name keepalived -e KEEPALIVED_PRIORITY=98 \
 - Thực hiện trên node 2:
 
 ```
-docker run -d --name keepalived -e KEEPALIVED_PRIORITY=99 \
---restart always \
+docker run -d --name keepalived --restart always \
+-e KEEPALIVED_PRIORITY=99 \
+-e HOST_IP=10.10.35.192 \
 -e KEEPALIVED_VIRTUAL_IP=10.10.35.197 \
 -e KEEPALIVED_PASSWORD=Password \
 --net=host --privileged=true angelnu/keepalived
@@ -122,8 +95,9 @@ docker run -d --name keepalived -e KEEPALIVED_PRIORITY=99 \
 - Thực hiện trên node 3:
 
 ```
-docker run -d --name keepalived -e KEEPALIVED_PRIORITY=100 \
---restart always \
+docker run -d --name keepalived --restart always \
+-e KEEPALIVED_PRIORITY=100 \
+-e HOST_IP=10.10.35.193 \
 -e KEEPALIVED_VIRTUAL_IP=10.10.35.197 \
 -e KEEPALIVED_PASSWORD=Password \
 --net=host --privileged=true angelnu/keepalived
