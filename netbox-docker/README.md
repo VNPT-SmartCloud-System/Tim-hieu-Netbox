@@ -19,31 +19,12 @@ git clone https://github.com/hungviet99/Tim-hieu-Netbox.git
 cd /opt/Tim-hieu-Netbox/netbox-docker
 ```
 ```
-echo "ALLOWED_HOSTS=<DOMAIN_NAME_NETBOX> <IP_NODE_1>" >> /opt/Tim-hieu-Netbox/netbox-docker/env/netbox.env
-echo "ALLOWED_HOSTS=<DOMAIN_NAME_NETBOX> <IP_NODE_2>" >> /opt/Tim-hieu-Netbox/netbox-docker/env/netbox1.env
-echo "ALLOWED_HOSTS=<DOMAIN_NAME_NETBOX> <IP_NODE_3>" >> /opt/Tim-hieu-Netbox/netbox-docker/env/netbox2.env
+echo "ALLOWED_HOSTS=<DOMAIN_NAME> <IP_NODE_1>" >> /opt/Tim-hieu-Netbox/netbox-docker/env/netbox.env
+echo "ALLOWED_HOSTS=<DOMAIN_NAME> <IP_NODE_2>" >> /opt/Tim-hieu-Netbox/netbox-docker/env/netbox1.env
+echo "ALLOWED_HOSTS=<DOMAIN_NAME> <IP_NODE_3>" >> /opt/Tim-hieu-Netbox/netbox-docker/env/netbox2.env
 ```
 
-> Thay <DOMAIN_NAME_NETBOX> <IP_NODE_1,2,3> bằng tên domain dùng cho netbox và IP tương ứng của từng node. 
-
-```
-tee docker-compose.override.yml <<EOF
-version: '3.4'
-services:
-  netbox:
-    ports:
-      - 8000:8080
-  netbox1:
-    ports:
-      - 8001:8080
-  netbox2:
-    ports:
-      - 8002:8080
-EOF
-docker stack deploy -c docker-compose.yml -c docker-compose.override.yml netbox
-```
-
-**Lưu ý:** Ta có các file để cấu hình domain trong thư mục `/opt/Tim-hieu-Netbox/netbox-docker/nginx-cert`. Nên cần phải sửa địa chỉ IP của từng host và tên domain sẽ sử dụng cho netbox tại đây. 
+> Thay <DOMAIN_NAME> <IP_NODE_1,2,3> bằng tên domain dùng cho netbox và IP tương ứng của từng node. 
 
 ### Bước 2: Chỉnh cấu hình config domain 
 
@@ -55,8 +36,46 @@ sed -i 's/    server 10.10.35.192:8001 max_fails=3 fail_timeout=5s;/    server <
 sed -i 's/    server 10.10.35.193:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_3>:8002 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/default.conf
 ```
 
+```
+sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME>;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/conf.d/default.conf
+```
 
-### Bước 6: Cài keppalived 
+> Thay <DOMAIN_NAME> <IP_NODE_1,2,3> bằng tên domain dùng cho netbox và IP tương ứng của từng node. 
+
+### Bước 3: Chỉnh cấu hình netbox docker
+
+- Thực hiện trên node master
+
+```
+sed -i 's/node.hostname == node1/node.hostname == <HOSTNAME_NODE1>/g' /opt/Tim-hieu-Netbox/netbox-docker/docker-compose.yml
+sed -i 's/node.hostname == node2/node.hostname == <HOSTNAME_NODE2>/g' /opt/Tim-hieu-Netbox/netbox-docker/docker-compose.yml
+sed -i 's/node.hostname == node3/node.hostname == <HOSTNAME_NODE3>/g' /opt/Tim-hieu-Netbox/netbox-docker/docker-compose.yml
+```
+
+> Sửa HOSTNAME_NODE1,2,3 tương ứng với hostname của các node. 
+
+### Bước 4: Chạy dịch vụ netbox 
+
+```
+tee docker-compose.override.yml <<EOF
+version: '3.4'
+services:
+  netbox-node1:
+    ports:
+      - 8000:8080
+  netbox-node2:
+    ports:
+      - 8001:8080
+  netbox-node3:
+    ports:
+      - 8002:8080
+EOF
+docker stack deploy -c docker-compose.yml -c docker-compose.override.yml netbox
+```
+
+**Lưu ý:** Ta có các file để cấu hình domain trong thư mục `/opt/Tim-hieu-Netbox/netbox-docker/nginx-cert`. Nên cần phải sửa địa chỉ IP của từng host và tên domain sẽ sử dụng cho netbox tại đây. 
+
+### Bước 5: Cài keppalived 
 
 - Thực hiện trên cả 3 node:
 
@@ -103,7 +122,7 @@ docker run -d --name keepalived --restart always \
 --net=host --privileged=true angelnu/keepalived
 ```
 
-> Lưu ý: `10.10.35.197` là địa chỉ IP VIP, hãy chỉ định địa chỉ VIP theo địa chỉ của bạn. `Password` là keepalived pass, có thể sửa theo password mong muốn
+> Lưu ý: `HOST_IP` sử dụng để khai báo ip tương ứng của từng node. `KEEPALIVED_VIRTUAL_IP` sử dụng để khai báo địa chỉ IP VIP, hãy chỉ định địa chỉ VIP theo địa chỉ của bạn. `Password` là keepalived pass, có thể sửa theo password mong muốn
 
 ### Bước 6: Kiểm tra 
 
