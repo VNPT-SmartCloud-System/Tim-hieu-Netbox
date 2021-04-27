@@ -49,50 +49,26 @@ docker stack deploy -c docker-compose.yml -c docker-compose.override.yml netbox
 
 Ta có 3 file domain là `domain1`, `domain2`, `domain3`. Ta lần lượt sửa tên domain sẽ sử dụng cho netbox như sau: 
 
-- **Node1**
-
+- Thực hiện trên cả 3 node
 ```
-sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf
-```
-
-- **Node2**
-
-```
-sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain2.conf
+sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain.conf
 ```
 
-- **Node3**
+
+- Thực hiện trên cả 3 node
 
 ```
-sed -i 's/    server_name netbox.com;/    server_name <DOMAIN_NAME_NETBOX>;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain3.conf
-```
-
-- Thực hiện trên cả 3 node 
-
-```
-sed -i 's/    server 10.10.35.191:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_1>:8000 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf
-sed -i 's/    server 10.10.35.192:8001 max_fails=3 fail_timeout=5s;/    server <IP_NODE_2>:8001 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf
-sed -i 's/    server 10.10.35.193:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_3>:8002 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf
+sed -i 's/    server 10.10.35.191:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_1>:8000 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain.conf
+sed -i 's/    server 10.10.35.192:8001 max_fails=3 fail_timeout=5s;/    server <IP_NODE_2>:8001 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain.conf
+sed -i 's/    server 10.10.35.193:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_3>:8002 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain.conf
 ```
 
 ### Bước 3: Copy file config domain name vào container.  
 
-- **Node1**
+- Thực hiện trên 3 node
 
 ```
-cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain1.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
-```
-
-- **Node2**
-
-```
-cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain2.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
-```
-
-- **Node3**
-
-```
-cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain3.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
+cp /opt/Tim-hieu-Netbox/netbox-docker/nginx-cert/domain.conf /var/lib/docker/volumes/netbox_etc-nginx/_data/conf.d/<DOMAIN_NAME>.conf
 ```
 
 ### Bước 4: Thực hiện chuyển thư mục ssl phòng khi cần sử dụng ssl. 
