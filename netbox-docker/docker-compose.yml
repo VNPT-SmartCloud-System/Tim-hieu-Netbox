@@ -1,15 +1,15 @@
 version: '3.4'
 services:
-  netbox: &netbox
+  netbox-node1: &netbox-node1
     image: netboxcommunity/netbox:v2.10
     deploy:
       placement:
-        constraints: [node.hostname == docker1]
+        constraints: [node.hostname == node1]
     depends_on:
-    - pgpool-0
-    - redis-sentinel
-    - redis-sentinel-cache
-    - netbox-worker
+    - pgpool-node1
+    - redis-sentinel-node1
+    - redis-sentinel-cache-node1
+    - netbox-wk-node1
     env_file: env/netbox.env
     user: '101'
     volumes:
@@ -23,28 +23,28 @@ services:
     - netbox-static:/opt/netbox/netbox/static/:z
     ports:
     - "8080"
-  netbox-worker:
-    <<: *netbox
+  netbox-wk-node1:
+    <<: *netbox-node1
     depends_on:
-    - redis-master
-    - redis-slave-0
-    - redis-slave-1
+    - redis-node1
+    - redis-node2
+    - redis-node3
     entrypoint:
     - /opt/netbox/venv/bin/python
     - /opt/netbox/netbox/manage.py
     command:
     - rqworker
     ports: []
-  netbox1: &netbox1
+  netbox-node2: &netbox-node2
     image: netboxcommunity/netbox:v2.10
     deploy:
       placement:
-        constraints: [node.hostname == docker2]
+        constraints: [node.hostname == node2]
     depends_on:
-    - pgpool-1
-    - redis-sentinel-1
-    - redis-sentinel-cache-1
-    - netbox-worker1
+    - pgpool-node2
+    - redis-sentinel-node2
+    - redis-sentinel-cache-node2
+    - netbox-wk-node2
     env_file: env/netbox1.env
     user: '101'
     volumes:
@@ -53,33 +53,33 @@ services:
     - ./configuration:/etc/netbox/config:z,ro
     - ./reports:/etc/netbox/reports:z,ro
     - ./scripts:/etc/netbox/scripts:z,ro
-    - netbox-media-files1:/opt/netbox/netbox/media:z
-    - netbox-config1:/etc/netbox:z
+    - netbox-media-files:/opt/netbox/netbox/media:z
+    - netbox-config:/etc/netbox:z
     - netbox-static:/opt/netbox/netbox/static/:z
     ports:
     - "8080"
-  netbox-worker1:
-    <<: *netbox1
+  netbox-wk-node2:
+    <<: *netbox-node2
     depends_on:
-    - redis-master
-    - redis-slave-0
-    - redis-slave-1
+    - redis-node1
+    - redis-node2
+    - redis-node3
     entrypoint:
     - /opt/netbox/venv/bin/python
     - /opt/netbox/netbox/manage.py
     command:
     - rqworker
     ports: []
-  netbox2: &netbox2
+  netbox-node3: &netbox-node3
     image: netboxcommunity/netbox:v2.10
     deploy:
       placement:
-        constraints: [node.hostname == docker3]
+        constraints: [node.hostname == node3]
     depends_on:
-    - pgpool-2
-    - redis-sentinel-2
-    - redis-sentinel-cache-2
-    - netbox-worker2
+    - pgpool-node3
+    - redis-sentinel-node3
+    - redis-sentinel-cache-node3
+    - netbox-wk-node3
     env_file: env/netbox2.env
     user: '101'
     volumes:
@@ -88,17 +88,17 @@ services:
     - ./configuration:/etc/netbox/config:z,ro
     - ./reports:/etc/netbox/reports:z,ro
     - ./scripts:/etc/netbox/scripts:z,ro
-    - netbox-media-files2:/opt/netbox/netbox/media:z
-    - netbox-config2:/etc/netbox:z
+    - netbox-media-files:/opt/netbox/netbox/media:z
+    - netbox-config:/etc/netbox:z
     - netbox-static:/opt/netbox/netbox/static/:z
     ports:
     - "8080"
-  netbox-worker2:
-    <<: *netbox2
+  netbox-wk-node3:
+    <<: *netbox-node3
     depends_on:
-    - redis-master
-    - redis-slave-0
-    - redis-slave-1
+      - redis-node1
+      - redis-node2
+      - redis-node3
     entrypoint:
     - /opt/netbox/venv/bin/python
     - /opt/netbox/netbox/manage.py
@@ -106,15 +106,15 @@ services:
     - rqworker
     ports: []
   # postgres
-  pg-0:
+  pg-node1:
     image: docker.io/bitnami/postgresql-repmgr:13
     deploy:
       placement:
-        constraints: [node.hostname == docker1]
+        constraints: [node.hostname == node1]
     ports:
       - 5435:5432
     volumes:
-      - pg_0_data:/bitnami/postgresql
+      - pg_1_data:/bitnami/postgresql
     environment:
       - POSTGRESQL_POSTGRES_PASSWORD=StrongPass@123
       - POSTGRESQL_USERNAME=customuser
@@ -122,19 +122,19 @@ services:
       - POSTGRESQL_DATABASE=netbox
       - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
       - REPMGR_PASSWORD=repmgrpassword
-      - REPMGR_PRIMARY_HOST=pg-0
-      - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
-      - REPMGR_NODE_NAME=pg-0
-      - REPMGR_NODE_NETWORK_NAME=pg-0
-  pg-1:
+      - REPMGR_PRIMARY_HOST=pg-node1
+      - REPMGR_PARTNER_NODES=pg-node1,pg-node2,pg-node3
+      - REPMGR_NODE_NAME=pg-node1
+      - REPMGR_NODE_NETWORK_NAME=pg-node1
+  pg-node2:
     image: docker.io/bitnami/postgresql-repmgr:13
     deploy:
       placement:
-        constraints: [node.hostname == docker2]
+        constraints: [node.hostname == node2]
     ports:
       - 5436:5432
     volumes:
-      - pg_1_data:/bitnami/postgresql
+      - pg_2_data:/bitnami/postgresql
     environment:
       - POSTGRESQL_POSTGRES_PASSWORD=StrongPass@123
       - POSTGRESQL_USERNAME=customuser
@@ -142,19 +142,19 @@ services:
       - POSTGRESQL_DATABASE=netbox
       - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
       - REPMGR_PASSWORD=repmgrpassword
-      - REPMGR_PRIMARY_HOST=pg-0
-      - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
-      - REPMGR_NODE_NAME=pg-1
-      - REPMGR_NODE_NETWORK_NAME=pg-1
-  pg-2:
+      - REPMGR_PRIMARY_HOST=pg-node1
+      - REPMGR_PARTNER_NODES=pg-node1,pg-node2,pg-node3
+      - REPMGR_NODE_NAME=pg-node2
+      - REPMGR_NODE_NETWORK_NAME=pg-node2
+  pg-node3:
     image: docker.io/bitnami/postgresql-repmgr:13
     deploy:
       placement:
-        constraints: [node.hostname == docker3]
+        constraints: [node.hostname == node3]
     ports:
       - 5437:5432
     volumes:
-      - pg_1_data:/bitnami/postgresql
+      - pg_3_data:/bitnami/postgresql
     environment:
       - POSTGRESQL_POSTGRES_PASSWORD=StrongPass@123
       - POSTGRESQL_USERNAME=customuser
@@ -162,23 +162,23 @@ services:
       - POSTGRESQL_DATABASE=netbox
       - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
       - REPMGR_PASSWORD=repmgrpassword
-      - REPMGR_PRIMARY_HOST=pg-0
-      - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
-      - REPMGR_NODE_NAME=pg-2
-      - REPMGR_NODE_NETWORK_NAME=pg-2
-  pgpool-0:
+      - REPMGR_PRIMARY_HOST=pg-node1
+      - REPMGR_PARTNER_NODES=pg-node1,pg-node2,pg-node3
+      - REPMGR_NODE_NAME=pg-node3
+      - REPMGR_NODE_NETWORK_NAME=pg-node3
+  pgpool-node1:
     image: docker.io/bitnami/pgpool:4
     deploy:
       placement:
-        constraints: [node.hostname == docker1]
+        constraints: [node.hostname == node1]
     ports:
       - 5432:5432
     depends_on:
-      - pg-0
-      - pg-1
-      - pg-2
+      - pg-node1
+      - pg-node2
+      - pg-node3
     environment:
-      - PGPOOL_BACKEND_NODES=0:pg-0:5432,1:pg-1:5432,2:pg-2:5432
+      - PGPOOL_BACKEND_NODES=0:pg-node1:5432,1:pg-node2:5432,2:pg-node3:5432
       - PGPOOL_SR_CHECK_USER=customuser
       - PGPOOL_SR_CHECK_PASSWORD=custompassword
       - PGPOOL_ENABLE_LDAP=no
@@ -192,19 +192,19 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  pgpool-1:
+  pgpool-node2:
     image: docker.io/bitnami/pgpool:4
     deploy:
       placement:
-        constraints: [node.hostname == docker2]
+        constraints: [node.hostname == node2]
     ports:
       - 5433:5432
     depends_on:
-      - pg-0
-      - pg-1
-      - pg-2
+      - pg-node1
+      - pg-node2
+      - pg-node3
     environment:
-      - PGPOOL_BACKEND_NODES=0:pg-0:5432,1:pg-1:5432,2:pg-2:5432
+      - PGPOOL_BACKEND_NODES=0:pg-node1:5432,1:pg-node2:5432,2:pg-node3:5432
       - PGPOOL_SR_CHECK_USER=customuser
       - PGPOOL_SR_CHECK_PASSWORD=custompassword
       - PGPOOL_ENABLE_LDAP=no
@@ -218,19 +218,19 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  pgpool-2:
+  pgpool-node3:
     image: docker.io/bitnami/pgpool:4
     deploy:
       placement:
-        constraints: [node.hostname == docker3]
+        constraints: [node.hostname == node3]
     ports:
       - 5434:5432
     depends_on:
-      - pg-0
-      - pg-1
-      - pg-2
+      - pg-node1
+      - pg-node2
+      - pg-node3
     environment:
-      - PGPOOL_BACKEND_NODES=0:pg-0:5432,1:pg-1:5432,2:pg-2:5432
+      - PGPOOL_BACKEND_NODES=0:pg-node1:5432,1:pg-node2:5432,2:pg-node3:5432
       - PGPOOL_SR_CHECK_USER=customuser
       - PGPOOL_SR_CHECK_PASSWORD=custompassword
       - PGPOOL_ENABLE_LDAP=no
@@ -245,180 +245,180 @@ services:
       timeout: 5s
       retries: 5
   # redis
-  redis-master:
+  redis-node1:
     image: 'bitnami/redis:6.2'
     deploy:
       placement:
-        constraints: [node.hostname == docker1]
+        constraints: [node.hostname == node1]
     environment:
       - REDIS_REPLICATION_MODE=master
       - REDIS_PASSWORD=StrongPass@123
     volumes:
     - netbox-redis-master-data:/bitnami/redis/data
 
-  redis-slave-0:
+  redis-node2:
     image: 'bitnami/redis:6.2'
     deploy:
       placement:
-        constraints: [node.hostname == docker2]
+        constraints: [node.hostname == node2]
     environment:
       - REDIS_REPLICATION_MODE=slave
-      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_HOST=redis-node1
       - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_PASSWORD=StrongPass@123
     ports:
       - '6379'
     depends_on:
-      - redis-master
+      - redis-node1
     volumes:
     - netbox-redis_0-data:/bitnami/redis/data
 
-  redis-slave-1:
+  redis-node3:
     image: 'bitnami/redis:6.2'
     deploy:
       placement:
-        constraints: [node.hostname == docker3]
+        constraints: [node.hostname == node3]
     environment:
       - REDIS_REPLICATION_MODE=slave
-      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_HOST=redis-node1
       - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_PASSWORD=StrongPass@123
     ports:
       - '6379'
     depends_on:
-      - redis-master
+      - redis-node1
     volumes:
     - netbox-redis_1-data:/bitnami/redis/data
   
-  redis-sentinel:
+  redis-sentinel-node1:
     image: 'bitnami/redis-sentinel:6.2'
     deploy:
       placement:
-        constraints: [node.hostname == docker1]
+        constraints: [node.hostname == node1]
     environment:
-      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_HOST=redis-node1
       - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
-      - redis-master
-      - redis-slave-0
-      - redis-slave-1
+      - redis-node1
+      - redis-node2
+      - redis-node3
     ports:
       - '26379:26379'
-  redis-sentinel-1:
+  redis-sentinel-node2:
     image: 'bitnami/redis-sentinel:6.2'
     deploy:
       placement:
-        constraints: [node.hostname == docker2]
+        constraints: [node.hostname == node2]
     environment:
-      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_HOST=redis-node1
       - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
-      - redis-master
-      - redis-slave-0
-      - redis-slave-1
+      - redis-node1
+      - redis-node2
+      - redis-node3
     ports:
       - '26380:26379'
 
-  redis-sentinel-2:
+  redis-sentinel-node3:
     image: 'bitnami/redis-sentinel:6.2'
     deploy:
       placement:
-        constraints: [node.hostname == docker3]
+        constraints: [node.hostname == node3]
     environment:
-      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_HOST=redis-node1
       - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
-      - redis-master
-      - redis-slave-0
-      - redis-slave-1
+      - redis-node1
+      - redis-node2
+      - redis-node3
     ports:
       - '26381:26379'
 # redis cache 
-  redis-cache-master:
+  redis-cache-node1:
     image: 'bitnami/redis:6.2'
     deploy:
       placement:
-        constraints: [node.hostname == docker1]
+        constraints: [node.hostname == node1]
     environment:
       - REDIS_REPLICATION_MODE=master
       - REDIS_PASSWORD=StrongPass@123
 
-  redis-cache-slave-0:
+  redis-cache-node2:
     image: 'bitnami/redis:6.2'
     deploy:
       placement:
-        constraints: [node.hostname == docker2]
+        constraints: [node.hostname == node2]
     environment:
       - REDIS_REPLICATION_MODE=slave
-      - REDIS_MASTER_HOST=redis-cache-master
+      - REDIS_MASTER_HOST=redis-cache-node1
       - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_PASSWORD=StrongPass@123
     ports:
       - '6379'
     depends_on:
-      - redis-cache-master
+      - redis-cache-node1
 
-  redis-cache-slave-1:
+  redis-cache-node3:
     image: 'bitnami/redis:6.2'
     deploy:
       placement:
-        constraints: [node.hostname == docker3]
+        constraints: [node.hostname == node3]
     environment:
       - REDIS_REPLICATION_MODE=slave
-      - REDIS_MASTER_HOST=redis-cache-master
+      - REDIS_MASTER_HOST=redis-cache-node1
       - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_PASSWORD=StrongPass@123
     ports:
       - '6379'
     depends_on:
-      - redis-cache-master
+      - redis-cache-node1
 
-  redis-sentinel-cache:
+  redis-sentinel-cache-node1:
     image: 'bitnami/redis-sentinel:6.2'
     deploy:
       placement:
-        constraints: [node.hostname == docker1]
+        constraints: [node.hostname == node1]
     environment:
-      - REDIS_MASTER_HOST=redis-cache-master
+      - REDIS_MASTER_HOST=redis-cache-node1
       - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
-      - redis-cache-master
-      - redis-cache-slave-0
-      - redis-cache-slave-1
+      - redis-cache-node1
+      - redis-cache-node2
+      - redis-cache-node3
     ports:
       - '26382:26379'
-  redis-sentinel-cache-1:
+  redis-sentinel-cache-node2:
     image: 'bitnami/redis-sentinel:6.2'
     deploy:
       placement:
-        constraints: [node.hostname == docker2]
+        constraints: [node.hostname == node2]
     environment:
-      - REDIS_MASTER_HOST=redis-cache-master
+      - REDIS_MASTER_HOST=redis-cache-node1
       - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
-      - redis-cache-master
-      - redis-cache-slave-0
-      - redis-cache-slave-1
+      - redis-cache-node1
+      - redis-cache-node2
+      - redis-cache-node3
     ports:
       - '26383:26379'
-  redis-sentinel-cache-2:
+  redis-sentinel-cache-node3:
     image: 'bitnami/redis-sentinel:6.2'
     deploy:
       placement:
-        constraints: [node.hostname == docker3]
+        constraints: [node.hostname == node3]
     environment:
-      - REDIS_MASTER_HOST=redis-cache-master
+      - REDIS_MASTER_HOST=redis-cache-node1
       - REDIS_MASTER_PASSWORD=StrongPass@123
       - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
     depends_on:
-      - redis-cache-master
-      - redis-cache-slave-0
-      - redis-cache-slave-1
+      - redis-cache-node1
+      - redis-cache-node2
+      - redis-cache-node3
     ports:
       - '26384:26379'
   nginx-reverse-lb:
@@ -430,12 +430,13 @@ services:
       - 443:443
     volumes:
     - netbox-static:/opt/netbox/netbox/static/:z,ro
-    - etc-nginx:/etc/nginx
+    - ./nginx-cert/conf.d:/etc/nginx/conf.d:z,ro
+    - ./nginx-cert/ssl:/etc/nginx/ssl:z,ro
 
 volumes:
   netbox-postgres-data:
     driver: local
-  pg_0_data:
+  pg_3_data:
     driver: local
   pg_1_data:
     driver: local
@@ -451,15 +452,7 @@ volumes:
     driver: local
   netbox-config:
     driver: local
-  netbox-media-files1:
-    driver: local
-  netbox-config1:
-    driver: local
-  netbox-media-files2:
-    driver: local
   netbox-config2:
     driver: local
   netbox-static:
-    driver: local
-  etc-nginx:
     driver: local
