@@ -15,24 +15,24 @@ Repo này chứa các thành phần cần thiết để triển khai HA cho netb
 
 - **Node 1:**
 
-`IP`: 10.10.35.191  
-`OS`: Ubuntu 18.04  
-`Domain`: netbox.com  
-`Hostname`: node1  
+IP: 10.10.35.191  
+OS: Ubuntu 18.04  
+Domain: netbox.com  
+Hostname: node1  
 
 - **Node 2:**
 
-`IP`: 10.10.35.192  
-`OS`: Ubuntu 18.04  
-`Domain`: netbox.com  
-`Hostname`: node2  
+IP: 10.10.35.192  
+OS: Ubuntu 18.04  
+Domain: netbox.com  
+Hostname: node2  
 
 - Node 3: 
 
-`IP`: 10.10.35.193  
-`OS`: Ubuntu 18.04  
-`Domain`: netbox.com  
-`Hostname`: node3  
+IP: 10.10.35.193  
+OS: Ubuntu 18.04  
+Domain: netbox.com  
+Hostname: node3  
 
 - Virtual IP: 10.10.35.197
 
