@@ -13,21 +13,21 @@ Repo này chứa các thành phần cần thiết để triển khai HA cho netb
 
 ### Chuẩn bị
 
-- **Node 1:**
+- **Node 1(master node):**
 
 IP: 10.10.35.191  
 OS: Ubuntu 18.04  
 Domain: netbox.com  
 Hostname: node1  
 
-- **Node 2:**
+- **Node 2(slave node):**
 
 IP: 10.10.35.192  
 OS: Ubuntu 18.04  
 Domain: netbox.com  
 Hostname: node2  
 
-- Node 3: 
+- **Node 3(slave node):**
 
 IP: 10.10.35.193  
 OS: Ubuntu 18.04  
@@ -51,6 +51,8 @@ git clone https://github.com/hungviet99/Tim-hieu-Netbox.git
 
 ### Bước 2: Thêm config ip và domain cho netbox
 
+- Thực hiện trên node master: 
+
 ```
 cd /opt/Tim-hieu-Netbox/HA-Netbox-Docker
 ```
@@ -67,9 +69,9 @@ echo "ALLOWED_HOSTS=<DOMAIN_NAME> <IP_NODE_3>" >> /opt/Tim-hieu-Netbox/HA-Netbox
 - Thực hiện trên cả 3 node
 
 ```
-sed -i 's/    server 10.10.35.191:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_1>:8000 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/nginx-cert/default.conf
-sed -i 's/    server 10.10.35.192:8001 max_fails=3 fail_timeout=5s;/    server <IP_NODE_2>:8001 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/nginx-cert/default.conf
-sed -i 's/    server 10.10.35.193:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_3>:8002 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/nginx-cert/default.conf
+sed -i 's/    server 10.10.35.191:8000 max_fails=3 fail_timeout=5s;/    server <IP_NODE_1>:8000 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/nginx-cert/conf.d/default.conf
+sed -i 's/    server 10.10.35.192:8001 max_fails=3 fail_timeout=5s;/    server <IP_NODE_2>:8001 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/nginx-cert/conf.d/default.conf
+sed -i 's/    server 10.10.35.193:8002 max_fails=3 fail_timeout=5s;/    server <IP_NODE_3>:8002 max_fails=3 fail_timeout=5s;/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/nginx-cert/conf.d/default.conf
 ```
 
 ```
