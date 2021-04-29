@@ -165,7 +165,7 @@ docker run -d --name keepalived --restart always \
 Sau 1 vài phút toàn bộ ứng dụng được triển khai sẽ khả dụng. Mở trình duyệt và truy cập vào url `https://<DOMAIN_NAME_NETBOX>/` để vào trang chủ netbox. Có thể đăng nhập ở góc bên phải với thông tin đăng nhập mặc định là:
 
 * Username: **admin**
-* Password: **admin**
+* Password: **PasswordStrong@2021**
 * API Token: **0123456789abcdef0123456789abcdef01234567**
 
 ## Dependencies
