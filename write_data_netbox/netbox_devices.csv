@@ -1,0 +1,2 @@
+name,device_type,device_role,tenant,manufacturer,face,position,platform,serial,asset_tag,status,comments,region,region_slug,site,site_slug,site_facility,rack_role,rack_role_slug,rack_group,rack_group_slug,rack_status,rack_u_height,rack_name,
+PRODUC1,R620,Server,,Dell,Front,9,,DELL1556,VNPTSRV5,Active,User: hungnv,Ha Noi,ha-noi,CMC DC,cmc-dc,CMC,PRODUCT,product,KHACH HANG,khach-hang,Active,45,M24,

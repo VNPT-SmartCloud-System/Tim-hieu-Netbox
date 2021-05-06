@@ -1,4 +1,0 @@
-name,device_role,tenant,manufacturer,device_type,platform,serial,asset_tag,status,site,rack_group,rack_name,position,face,comments
-DELL-KVMLAB2,Server,,Dell,R620,,DELL67890,VNPTSRV2,Active,VNPT DC,Thuc Tap,C12,6,Front,"User: root  
-Password: Nguyen Viet Hung"
-DELL-KVMLAB3,Server,,Dell,R620,,DELL157985,VNPTSRV3,Active,VNPT DC,Thuc Tap,C12,9,Front,User: hungnv
