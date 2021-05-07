@@ -1,14 +1,24 @@
 import pynetbox
 import config
 import create_sites
+import create_regions
 import create_rack_groups
 import create_racks
 import create_rack_roles
+import create_manufacturers
+import create_device_roles
+import create_device_types
+
 netbox = pynetbox.api(url=config.URL_NB, token=config.TOKEN_NB)
 
 def check_manufacs(manufact_name):
     manufact_info = netbox.dcim.manufacturers.get(name="{}" .format(manufact_name))
-    manufact_id = manufact_info['id']
+    if manufact_info == None:
+        create_manufacturers.create_manufacs_main()
+        manufact_info1 = netbox.dcim.manufacturers.get(name="{}" .format(manufact_name))
+        manufact_id = manufact_info1['id']
+    else:
+        manufact_id = manufact_info['id']
     return manufact_id
 
 def check_sites(site_name):
@@ -23,7 +33,12 @@ def check_sites(site_name):
 
 def check_regions(region_name):
     region_info = netbox.dcim.regions.get(name="{}" .format(region_name))
-    region_id = region_info['id']
+    if region_info == None:
+        create_regions.create_region_main()
+        region_info1 = netbox.dcim.regions.get(name="{}" .format(region_name))
+        region_id = region_info1['id']
+    else:
+        region_id = region_info['id']
     return region_id
 
 def check_racks(rack_name):
@@ -50,7 +65,7 @@ def check_rack_group(group_name):
     rack_group_info = netbox.dcim.rack_groups.get(name="{}" .format(group_name))
     if rack_group_info == None:
         create_rack_groups.create_rack_group_main()
-        rack_group_info1 = netbox.dcim.sites.get(name="{}" .format(group_name))
+        rack_group_info1 = netbox.dcim.rack_groups.get(name="{}" .format(group_name))
         rack_group_id = rack_group_info1['id']
     else:
         rack_group_id = rack_group_info['id']
@@ -58,12 +73,22 @@ def check_rack_group(group_name):
 
 def check_device_types(manufact_id, device_model):
     device_type_info = netbox.dcim.device_types.get(manufacturer_id='{}' .format(manufact_id), model='{}' .format(device_model))
-    device_type_id = device_type_info['id']
+    if device_type_info == None:
+        create_device_types.create_device_type_main()
+        device_type_info1 = netbox.dcim.device_types.get(manufacturer_id='{}' .format(manufact_id), model='{}' .format(device_model))
+        device_type_id = device_type_info1['id']
+    else:
+        device_type_id = device_type_info['id']
     return device_type_id
 
 def check_device_roles(role_name):
     device_role_info = netbox.dcim.device_roles.get(name="{}" .format(role_name))
-    device_role_id = device_role_info['id']
+    if device_role_info == None:
+        create_device_roles.create_device_role_main()
+        device_role_info1 = netbox.dcim.device_roles.get(name="{}" .format(role_name))
+        device_role_id = device_role_info1['id']
+    else:
+        device_role_id = device_role_info['id']
     return device_role_id
 
 def check_position_racks(rack_id):
