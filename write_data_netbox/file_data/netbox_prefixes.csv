@@ -1,3 +1,3 @@
-prefix,is_pool,vrf,tenant,site,vlan_group,vlan_group_slug,vlan,vlan_name,status,role,rir_name,rir_slug,aggregates_prefix
-10.10.34.0/24,TRUE,,,VNPT DC,Thuc Tap,thuc-tap,634,VLAN 634,active,,APNIC,apnic,10.0.0.0/8
-10.10.35.0/24,TRUE,,,VNPT DC,Thuc Tap,thuc-tap,635,VLAN 635,active,,APNIC,apnic,10.0.0.0/8
+prefix,is_pool,vrf,tenant,site,vlan_group,vlan_group_slug,vlan,vlan_name,status,role,role_slug,rir_name,rir_slug,aggregates_prefix
+10.10.34.0/24,TRUE,,,VNPT DC,Thuc Tap,thuc-tap,634,VLAN 634,active,LAB,lab,APNIC,apnic,10.0.0.0/8
+10.10.35.0/24,TRUE,,,VNPT DC,Thuc Tap,thuc-tap,635,VLAN 635,active,LAB,lab,APNIC,apnic,10.0.0.0/8
