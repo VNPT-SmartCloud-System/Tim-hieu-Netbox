@@ -1,0 +1,2 @@
+name,device_type,device_type_slug,device_type_u_height,device_role,device_role_slug,tenant,manufacturer,manufacturer_slug,face,position,platform,serial,asset_tag,status,comments,region,region_slug,site,site_slug,site_facility,rack_role,rack_role_slug,rack_group,rack_group_slug,rack_status,rack_u_height,rack_name
+PRODUC2,R650,r650,2,Product,product,,HP,hp,Front,14,,HP1346,VNPTSRV6,Active,User: hungnv,TPHCM,tphcm,AMAZONE DC,amazone-dc,AMAZONE,PRODUCT1,product1,KHACH HANG1,khach-hang1,Active,45,H35

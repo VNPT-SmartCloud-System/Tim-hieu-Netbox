@@ -90,6 +90,24 @@ sed -i 's/node.hostname == node2/node.hostname == <HOSTNAME_NODE2>/g' /opt/Tim-h
 sed -i 's/node.hostname == node3/node.hostname == <HOSTNAME_NODE3>/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/docker-compose.yml
 ```
 
+```
+sed -i 's/node.hostname == node1/node.hostname == <HOSTNAME_NODE1>/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/docker-compose.redis.yml
+sed -i 's/node.hostname == node2/node.hostname == <HOSTNAME_NODE2>/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/docker-compose.redis.yml
+sed -i 's/node.hostname == node3/node.hostname == <HOSTNAME_NODE3>/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/docker-compose.redis.yml
+```
+
+```
+sed -i 's/node.hostname == node1/node.hostname == <HOSTNAME_NODE1>/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/docker-compose.redis_cache.yml
+sed -i 's/node.hostname == node2/node.hostname == <HOSTNAME_NODE2>/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/docker-compose.redis_cache.yml
+sed -i 's/node.hostname == node3/node.hostname == <HOSTNAME_NODE3>/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/docker-compose.redis_cache.yml
+```
+
+```
+sed -i 's/node.hostname == node1/node.hostname == <HOSTNAME_NODE1>/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/docker-compose.postgres.yml
+sed -i 's/node.hostname == node2/node.hostname == <HOSTNAME_NODE2>/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/docker-compose.postgres.yml
+sed -i 's/node.hostname == node3/node.hostname == <HOSTNAME_NODE3>/g' /opt/Tim-hieu-Netbox/HA-Netbox-Docker/docker-compose.postgres.yml
+```
+
 > Sửa HOSTNAME_NODE1,2,3 tương ứng với hostname của các node. 
 
 ### Bước 5: Cài đặt netbox
@@ -108,7 +126,7 @@ services:
     ports:
       - 8002:8080
 EOF
-docker stack deploy -c docker-compose.yml -c docker-compose.override.yml netbox
+docker stack deploy -c docker-compose.yml -c docker-compose.override.yml -c docker-compose.postgres.yml -c docker-compose.redis_cache.yml -c docker-compose.redis.yml netbox
 ```
 
 ### Bước 6: Cài keppalived 
