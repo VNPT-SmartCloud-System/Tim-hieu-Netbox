@@ -1,0 +1,100 @@
+version: '3.4'
+services:
+  redis-node1:
+    image: bitnami/redis:6.2
+    deploy:
+      placement:
+        constraints: [node.hostname == node1]
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_PASSWORD=StrongPass@123
+    volumes:
+    - netbox-redis-master-data:/bitnami/redis/data
+
+  redis-node2:
+    image: bitnami/redis:6.2
+    deploy:
+      placement:
+        constraints: [node.hostname == node2]
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-node1
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_PASSWORD=StrongPass@123
+    ports:
+      - '6379'
+    depends_on:
+      - redis-node1
+    volumes:
+    - netbox-redis_0-data:/bitnami/redis/data
+
+  redis-node3:
+    image: bitnami/redis:6.2
+    deploy:
+      placement:
+        constraints: [node.hostname == node3]
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-node1
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_PASSWORD=StrongPass@123
+    ports:
+      - '6379'
+    depends_on:
+      - redis-node1
+    volumes:
+    - netbox-redis_1-data:/bitnami/redis/data
+
+  redis-sentinel-node1:
+    image: bitnami/redis-sentinel:6.2
+    deploy:
+      placement:
+        constraints: [node.hostname == node1]
+    environment:
+      - REDIS_MASTER_HOST=redis-node1
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
+    depends_on:
+      - redis-node1
+      - redis-node2
+      - redis-node3
+    ports:
+      - '26379:26379'
+  redis-sentinel-node2:
+    image: bitnami/redis-sentinel:6.2
+    deploy:
+      placement:
+        constraints: [node.hostname == node2]
+    environment:
+      - REDIS_MASTER_HOST=redis-node1
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
+    depends_on:
+      - redis-node1
+      - redis-node2
+      - redis-node3
+    ports:
+      - '26380:26379'
+  redis-sentinel-node3:
+    image: bitnami/redis-sentinel:6.2
+    deploy:
+      placement:
+        constraints: [node.hostname == node3]
+    environment:
+      - REDIS_MASTER_HOST=redis-node1
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
+    depends_on:
+      - redis-node1
+      - redis-node2
+      - redis-node3
+    ports:
+      - '26381:26379'
+      
+volumes:
+  netbox-redis-master-data:
+    driver: local
+  netbox-redis_0-data:
+    driver: local
+  netbox-redis_1-data:
+    driver: local

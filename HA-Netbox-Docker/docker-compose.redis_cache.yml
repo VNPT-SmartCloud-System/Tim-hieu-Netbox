@@ -1,0 +1,86 @@
+version: '3.4'
+services:
+  redis-cache-node1:
+    image: bitnami/redis:6.2
+    deploy:
+      placement:
+        constraints: [node.hostname == node1]
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_PASSWORD=StrongPass@123
+
+  redis-cache-node2:
+    image: bitnami/redis:6.2
+    deploy:
+      placement:
+        constraints: [node.hostname == node2]
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-cache-node1
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_PASSWORD=StrongPass@123
+    ports:
+      - '6379'
+    depends_on:
+      - redis-cache-node1
+      
+  redis-cache-node3:
+    image: bitnami/redis:6.2
+    deploy:
+      placement:
+        constraints: [node.hostname == node3]
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-cache-node1
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_PASSWORD=StrongPass@123
+    ports:
+      - '6379'
+    depends_on:
+      - redis-cache-node1
+
+  redis-sentinel-cache-node1:
+    image: bitnami/redis-sentinel:6.2
+    deploy:
+      placement:
+        constraints: [node.hostname == node1]
+    environment:
+      - REDIS_MASTER_HOST=redis-cache-node1
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
+    depends_on:
+      - redis-cache-node1
+      - redis-cache-node2
+      - redis-cache-node3
+    ports:
+      - '26382:26379'
+  redis-sentinel-cache-node2:
+    image: bitnami/redis-sentinel:6.2
+    deploy:
+      placement:
+        constraints: [node.hostname == node2]
+    environment:
+      - REDIS_MASTER_HOST=redis-cache-node1
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
+    depends_on:
+      - redis-cache-node1
+      - redis-cache-node2
+      - redis-cache-node3
+    ports:
+      - '26383:26379'
+  redis-sentinel-cache-node3:
+    image: bitnami/redis-sentinel:6.2
+    deploy:
+      placement:
+        constraints: [node.hostname == node3]
+    environment:
+      - REDIS_MASTER_HOST=redis-cache-node1
+      - REDIS_MASTER_PASSWORD=StrongPass@123
+      - REDIS_SENTINEL_TLS_AUTH_CLIENTS=no
+    depends_on:
+      - redis-cache-node1
+      - redis-cache-node2
+      - redis-cache-node3
+    ports:
+      - '26384:26379'

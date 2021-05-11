@@ -1,0 +1,148 @@
+version: '3.4'
+services:
+  pg-0:
+    image: docker.io/bitnami/postgresql-repmgr:13
+    deploy:
+      placement:
+        constraints: [node.hostname == node1]
+    ports:
+      - 5435:5432
+    volumes:
+      - pg_0_data:/bitnami/postgresql
+    environment:
+      - POSTGRESQL_POSTGRES_PASSWORD=StrongPass@123
+      - POSTGRESQL_USERNAME=customuser
+      - POSTGRESQL_PASSWORD=custompassword
+      - POSTGRESQL_DATABASE=netbox
+      - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
+      - REPMGR_PASSWORD=repmgrpassword
+      - REPMGR_PRIMARY_HOST=pg-0
+      - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
+      - REPMGR_NODE_NAME=pg-0
+      - REPMGR_NODE_NETWORK_NAME=pg-0
+  pg-1:
+    image: docker.io/bitnami/postgresql-repmgr:13
+    deploy:
+      placement:
+        constraints: [node.hostname == node2]
+    ports:
+      - 5436:5432
+    volumes:
+      - pg_1_data:/bitnami/postgresql
+    environment:
+      - POSTGRESQL_POSTGRES_PASSWORD=StrongPass@123
+      - POSTGRESQL_USERNAME=customuser
+      - POSTGRESQL_PASSWORD=custompassword
+      - POSTGRESQL_DATABASE=netbox
+      - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
+      - REPMGR_PASSWORD=repmgrpassword
+      - REPMGR_PRIMARY_HOST=pg-0
+      - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
+      - REPMGR_NODE_NAME=pg-1
+      - REPMGR_NODE_NETWORK_NAME=pg-1
+  pg-2:
+    image: docker.io/bitnami/postgresql-repmgr:13
+    deploy:
+      placement:
+        constraints: [node.hostname == node3]
+    ports:
+      - 5437:5432
+    volumes:
+      - pg_2_data:/bitnami/postgresql
+    environment:
+      - POSTGRESQL_POSTGRES_PASSWORD=StrongPass@123
+      - POSTGRESQL_USERNAME=customuser
+      - POSTGRESQL_PASSWORD=custompassword
+      - POSTGRESQL_DATABASE=netbox
+      - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=1
+      - REPMGR_PASSWORD=repmgrpassword
+      - REPMGR_PRIMARY_HOST=pg-0
+      - REPMGR_PARTNER_NODES=pg-0,pg-1,pg-2
+      - REPMGR_NODE_NAME=pg-2
+      - REPMGR_NODE_NETWORK_NAME=pg-2
+  pgpool-0:
+    image: docker.io/bitnami/pgpool:4
+    deploy:
+      placement:
+        constraints: [node.hostname == node1]
+    ports:
+      - 5432:5432
+    depends_on:
+      - pg-0
+      - pg-1
+      - pg-2
+    environment:
+      - PGPOOL_BACKEND_NODES=0:pg-0:5432,1:pg-1:5432,2:pg-2:5432
+      - PGPOOL_SR_CHECK_USER=customuser
+      - PGPOOL_SR_CHECK_PASSWORD=custompassword
+      - PGPOOL_ENABLE_LDAP=no
+      - PGPOOL_POSTGRES_USERNAME=postgres
+      - PGPOOL_POSTGRES_PASSWORD=StrongPass@123
+      - PGPOOL_ADMIN_USERNAME=admin
+      - PGPOOL_ADMIN_PASSWORD=StrongPass@123
+      - PGPOOL_ENABLE_LOAD_BALANCING=yes
+    healthcheck:
+      test: ["CMD", "/opt/bitnami/scripts/pgpool/healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  pgpool-1:
+    image: docker.io/bitnami/pgpool:4
+    deploy:
+      placement:
+        constraints: [node.hostname == node2]
+    ports:
+      - 5433:5432
+    depends_on:
+      - pg-0
+      - pg-1
+      - pg-2
+    environment:
+      - PGPOOL_BACKEND_NODES=0:pg-0:5432,1:pg-1:5432,2:pg-2:5432
+      - PGPOOL_SR_CHECK_USER=customuser
+      - PGPOOL_SR_CHECK_PASSWORD=custompassword
+      - PGPOOL_ENABLE_LDAP=no
+      - PGPOOL_POSTGRES_USERNAME=postgres
+      - PGPOOL_POSTGRES_PASSWORD=StrongPass@123
+      - PGPOOL_ADMIN_USERNAME=admin
+      - PGPOOL_ADMIN_PASSWORD=StrongPass@123
+      - PGPOOL_ENABLE_LOAD_BALANCING=yes
+    healthcheck:
+      test: ["CMD", "/opt/bitnami/scripts/pgpool/healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  pgpool-2:
+    image: docker.io/bitnami/pgpool:4
+    deploy:
+      placement:
+        constraints: [node.hostname == node3]
+    ports:
+      - 5434:5432
+    depends_on:
+      - pg-0
+      - pg-1
+      - pg-2
+    environment:
+      - PGPOOL_BACKEND_NODES=0:pg-0:5432,1:pg-1:5432,2:pg-2:5432
+      - PGPOOL_SR_CHECK_USER=customuser
+      - PGPOOL_SR_CHECK_PASSWORD=custompassword
+      - PGPOOL_ENABLE_LDAP=no
+      - PGPOOL_POSTGRES_USERNAME=postgres
+      - PGPOOL_POSTGRES_PASSWORD=StrongPass@123
+      - PGPOOL_ADMIN_USERNAME=admin
+      - PGPOOL_ADMIN_PASSWORD=StrongPass@123
+      - PGPOOL_ENABLE_LOAD_BALANCING=yes
+    healthcheck:
+      test: ["CMD", "/opt/bitnami/scripts/pgpool/healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg_0_data:
+    driver: local
+  pg_1_data:
+    driver: local
+  pg_2_data:
+    driver: local
