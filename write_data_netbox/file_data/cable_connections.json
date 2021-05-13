@@ -1,0 +1,1 @@
+{"device_a_type":{"0":"dcim.interface"},"device_name_a":{"0":"LENOVO1"},"name_interface_a":{"0":"fa1"},"device_b_type":{"0":"dcim.interface"},"device_name_b":{"0":"Switch access KVM"},"name_interface_b":{"0":"f6"},"type":{"0":"cat6"},"status":{"0":"connected"},"length":{"0":10},"length_unit":{"0":"m"}}

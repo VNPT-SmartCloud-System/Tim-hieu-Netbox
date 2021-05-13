@@ -1,0 +1,1 @@
+{"prefix":{"0":"10.10.30.0\/24"},"is_pool":{"0":true},"vrf":{"0":null},"tenant":{"0":null},"site":{"0":"VNPT DC"},"vlan_group":{"0":"Thuc Tap"},"vlan_group_slug":{"0":"thuc-tap"},"vlan":{"0":630},"vlan_name":{"0":"VLAN 630"},"status":{"0":"active"},"role":{"0":"LAB"},"role_slug":{"0":"lab"},"rir_name":{"0":"APNIC"},"rir_slug":{"0":"apnic"},"aggregates_prefix":{"0":"10.0.0.0\/8"}}

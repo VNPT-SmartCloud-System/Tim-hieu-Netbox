@@ -1,0 +1,3 @@
+device_name,interface_name,assigned_object_type,ip_address,prefix,vrf,tenant,status,role,is_primary,dns_name,description
+DELL-KVMLAB2,fa1,dcim.interface,10.10.35.6,24,,,active,,TRUE,kvmhost2,gan ip cho kvm2
+DELL-KVMLAB2,fa2,dcim.interface,10.10.35.7,24,,,active,,,kvmhost2,gan ip cho kvm 2
