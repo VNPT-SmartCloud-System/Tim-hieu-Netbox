@@ -1,6 +1,6 @@
 import pynetbox
-import check_data_netbox
-import create_devices
+from check_data_netbox import netbox
+from convert_csv_to_json import get_json_data_dcim, get_key_data
 
 def get_data_device_role(numerical_order, data):
     add_data = list()
@@ -16,14 +16,13 @@ def create_device_role(key_data, data):
     for numerical_order in key_data:
         add_data = get_data_device_role(numerical_order, data)
         try:
-            check_data_netbox.netbox.dcim.device_roles.create(add_data)
+            netbox.dcim.device_roles.create(add_data)
         except pynetbox.RequestError as e:
             print(e.error)
     return add_data
 
 def create_device_role_main():
-    data = create_devices.get_json_data()
-    key_data = create_devices.get_key_data(data)
+    data = get_json_data_dcim()
+    key_data = get_key_data(data)
     create_device_role(key_data, data)
     return
-

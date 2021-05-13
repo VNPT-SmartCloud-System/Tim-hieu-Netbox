@@ -1,6 +1,6 @@
 import pynetbox
-import check_data_netbox
-import create_devices
+from check_data_netbox import netbox
+from convert_csv_to_json import get_json_data_dcim, get_key_data
 
 def get_data_manufacs(numerical_order, data):
     add_data = list()
@@ -16,13 +16,13 @@ def create_manufacs(key_data, data):
     for numerical_order in key_data:
         add_data = get_data_manufacs(numerical_order, data)
         try: 
-            check_data_netbox.netbox.dcim.manufacturers.create(add_data)
+            netbox.dcim.manufacturers.create(add_data)
         except pynetbox.RequestError as e:
             print(e.error)
     return
 
 def create_manufacs_main():
-    data = create_devices.get_json_data()
-    key_data = create_devices.get_key_data(data)
+    data = get_json_data_dcim()
+    key_data = get_key_data(data)
     create_manufacs(key_data, data)
     return

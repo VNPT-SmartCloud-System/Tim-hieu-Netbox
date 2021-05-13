@@ -1,10 +1,10 @@
 import pynetbox
-import check_data_netbox
-import create_devices
+from convert_csv_to_json import get_json_data_dcim, get_key_data
+from check_data_netbox import check_regions, netbox
 
 def get_data_site(numerical_order, data):
     region_name=data['region']['{}' .format(numerical_order)]
-    region_id= check_data_netbox.check_regions(region_name)
+    region_id= check_regions(region_name)
     add_data = list()
     add_data.append(
         dict (
@@ -20,13 +20,13 @@ def create_sites(key_data, data):
     for numerical_order in key_data:
         add_data = get_data_site(numerical_order, data)
         try:
-            check_data_netbox.netbox.dcim.sites.create(add_data)
+            netbox.dcim.sites.create(add_data)
         except pynetbox.RequestError as e:
             print(e.error)
     return
 
 def create_site_main():
-    data = create_devices.get_json_data()
-    key_data = create_devices.get_key_data(data)
+    data = get_json_data_dcim()
+    key_data = get_key_data(data)
     create_sites(key_data, data)
     return

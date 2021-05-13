@@ -1,14 +1,14 @@
 import pynetbox
-import check_data_netbox
-import create_devices
+from check_data_netbox import check_sites, check_rack_group, check_rack_roles, netbox
+from convert_csv_to_json import get_json_data_dcim, get_key_data
 
 def get_data_rack(numerical_order, data):
     site_name = data['site']['{}' .format(numerical_order)]
-    site_id = check_data_netbox.check_sites(site_name)
+    site_id = check_sites(site_name)
     group_name = data['rack_group']['{}' .format(numerical_order)]
-    rack_group_id = check_data_netbox.check_rack_group(group_name)
+    rack_group_id = check_rack_group(group_name)
     rack_role = data['rack_role']['{}' .format(numerical_order)]
-    rack_role_id = check_data_netbox.check_rack_roles(rack_role)
+    rack_role_id = check_rack_roles(rack_role)
     add_data = list()
     add_data.append(
         dict (
@@ -25,13 +25,13 @@ def create_rack(key_data, data):
     for numerical_order in key_data:
         add_data = get_data_rack(numerical_order, data)
         try: 
-            check_data_netbox.netbox.dcim.racks.create(add_data)
+            netbox.dcim.racks.create(add_data)
         except pynetbox.RequestError as e:
             print(e.error)
     return
 
 def create_rack_main():
-    data = create_devices.get_json_data()
-    key_data = create_devices.get_key_data(data)
+    data = get_json_data_dcim()
+    key_data = get_key_data(data)
     create_rack(key_data, data)
     return
