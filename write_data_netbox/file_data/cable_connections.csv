@@ -1,2 +1,0 @@
-﻿device_a_type,device_name_a,name_interface_a,device_b_type,device_name_b,name_interface_b,type,status,label,length,length_unit
-dcim.interface,LENOVO1,fa1,dcim.interface,Switch access KVM,f6,cat6,connected,,10,m
