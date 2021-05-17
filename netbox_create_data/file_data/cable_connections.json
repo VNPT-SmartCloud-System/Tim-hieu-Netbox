@@ -1,0 +1,1 @@
+{"device_name_a":{"0":"DB Server","1":"APP Server"},"name_interface_a":{"0":"GE 1","1":"FE 1"},"device_name_b":{"0":"SW 1","1":"SW 1"},"name_interface_b":{"0":"FE 1","1":"FE 2"},"type":{"0":"cat6","1":"cat6"},"status":{"0":"connected","1":"connected"},"label":{"0":null,"1":null},"length":{"0":10,"1":15},"length_unit":{"0":"m","1":"m"}}

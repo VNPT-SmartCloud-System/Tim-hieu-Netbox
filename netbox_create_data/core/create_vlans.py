@@ -14,7 +14,7 @@ def get_data_vlan(numerical_order, data):
         dict (
             site= site_id,
             group= group_id,
-            vid= data['vlan']['{}' .format(numerical_order)],
+            vid= data['vid']['{}' .format(numerical_order)],
             name= data['vlan_name']['{}' .format(numerical_order)],
             status = data['status']['{}' .format(numerical_order)],
             role = role_id,

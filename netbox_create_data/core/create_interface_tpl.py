@@ -7,18 +7,19 @@ def get_inf_template(numerical_order, data):
     manufact_id= check_manufacs(manufacturer)
     device_type=data['device_type']['{}' .format(numerical_order)]
     device_type_id= check_device_types(manufact_id, device_type)
+    interface_type= data['interface_type']['{}' .format(numerical_order)]
     count_inf = data['count_interface']['{}' .format(numerical_order)]
     types= data['type']['{}' .format(numerical_order)]
     mgmt_only = data['mgmt_only']['{}' .format(numerical_order)]
-    return device_type_id, count_inf, types, mgmt_only
+    return device_type_id, interface_type, count_inf, types, mgmt_only
 
 def create_inf_template(key_data, data):
     for numerical_order in key_data:
-        device_type_id, count_inf, types, mgmt_only = get_inf_template(numerical_order, data)
-        fa = 0
-        while fa < count_inf:
-            fa = fa+1
-            name = "fa{}" . format(fa)
+        device_type_id, interface_type, count_inf, types, mgmt_only = get_inf_template(numerical_order, data)
+        inf = 0
+        while inf < count_inf:
+            inf = inf+1
+            name = "{} {}" . format(interface_type, inf)
             add_data = list()
             add_data.append(
                 dict (

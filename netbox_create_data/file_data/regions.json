@@ -1,1 +1,1 @@
-{"region":{"0":"Ha Noi"},"slug":{"0":"ha-noi"},"parent":{"0":"Mien Bac"}}
+{"region":{"0":"Mien Bac","1":"Ha Noi","2":"Mien Nam","3":"TPHCM","4":"Mien Trung","5":"Da Nang"},"slug":{"0":"mien-bac","1":"ha-noi","2":"mien-nam","3":"tphcm","4":"mien-trung","5":"da-nang"},"parent":{"0":null,"1":"Mien Bac","2":null,"3":"Mien Nam","4":null,"5":"Mien Trung"}}

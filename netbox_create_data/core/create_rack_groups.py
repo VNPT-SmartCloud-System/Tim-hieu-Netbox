@@ -22,6 +22,7 @@ def create_rack_group(key_data, data):
             netbox.dcim.rack_groups.create(add_data)
         except pynetbox.RequestError as e:
             print(e.error)
+        # print(add_data)
     return
 
 def create_rack_group_main():
@@ -29,3 +30,4 @@ def create_rack_group_main():
     key_data = get_key_data(data)
     create_rack_group(key_data, data)
     return
+# create_rack_group_main()

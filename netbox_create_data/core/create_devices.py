@@ -6,7 +6,7 @@ def get_data_devices(numerical_order, data):
     device_type=data['device_type']['{}' .format(numerical_order)]
     device_role=data['device_role']['{}' .format(numerical_order)]
     site=data['site']['{}' .format(numerical_order)]
-    rack=data['rack_name']['{}' .format(numerical_order)]
+    rack=data['rack']['{}' .format(numerical_order)]
     manufacturer=data['manufacturer']['{}' .format(numerical_order)]
     platform=data['platform']['{}' .format(numerical_order)]
     platform_id=check_platforms(platform)

@@ -20,6 +20,7 @@ def create_rir(key_data, data):
             netbox.ipam.rirs.create(add_data)
         except pynetbox.RequestError as e:
             print(e.error)
+        # print(add_data)
     return
 
 def create_rir_main():
@@ -27,3 +28,4 @@ def create_rir_main():
     key_data = get_key_data(data)
     create_rir(key_data, data)
     return
+# create_rir_main()

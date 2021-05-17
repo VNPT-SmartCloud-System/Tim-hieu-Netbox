@@ -12,6 +12,7 @@ aggregates_json = config.AGGREGATES_JSON
 prefixes_json=config.PREFIXES_JSON
 interface_tpl_json=config.INTERFACE_TPL
 cable_connections_json=config.CABLE_CONNECT
+ip_addr_json=config.IP_ADDR_JSON
 
 def get_regions():
     from convert_csv_to_json import convert_region
@@ -89,6 +90,13 @@ def get_cables():
     with open('{}' .format(cable_connections_json)) as json_file:
         data_cable = json.load(json_file)
     return data_cable
+
+def get_ip_addrs():
+    from convert_csv_to_json import convert_ip_addr
+    convert_ip_addr()
+    with open('{}' .format(ip_addr_json)) as json_file:
+        data_ip_addr = json.load(json_file)
+    return data_ip_addr
 
 def get_key_data(data):
     key_data = []

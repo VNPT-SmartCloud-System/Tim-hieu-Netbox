@@ -9,18 +9,16 @@ def get_data_cable(numerical_order, data):
     inf_name_b = data['name_interface_b']['{}' .format(numerical_order)]
     interface_id_a = check_interface(device_name_a, inf_name_a)
     interface_id_b = check_interface(device_name_b, inf_name_b)
-    device_a_type = data['device_a_type']['{}' .format(numerical_order)]
-    device_b_type = data['device_b_type']['{}' .format(numerical_order)]
     add_data = list()
     add_data.append(
         dict (
-            termination_a_type= device_a_type,
+            termination_a_type= "dcim.interface",
             termination_a_id= interface_id_a ,
-            termination_b_type= device_b_type,
+            termination_b_type= "dcim.interface",
             termination_b_id= interface_id_b,
             type= data['type']['{}' .format(numerical_order)],
             status= data['status']['{}' .format(numerical_order)],
-            label= data['label']['{}' .format(numerical_order)],
+            # label= data['label']['{}' .format(numerical_order)],
             length= data['length']['{}' .format(numerical_order)],
             length_unit= data['length_unit']['{}' .format(numerical_order)],
         )
@@ -34,10 +32,12 @@ def create_cables(key_data, data):
             netbox.dcim.cables.create(add_data)
         except pynetbox.RequestError as e:
             print(e.error)
-    return add_data
+        # print(add_data)
+    return
 
 def create_cable_main():
     data = get_cables()
     key_data = get_key_data(data)
     create_cables(key_data, data)
     return
+create_cable_main()

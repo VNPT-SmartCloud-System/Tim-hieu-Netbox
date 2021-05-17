@@ -19,6 +19,7 @@ def create_manufacs(key_data, data):
             netbox.dcim.manufacturers.create(add_data)
         except pynetbox.RequestError as e:
             print(e.error)
+        # print(add_data)
     return
 
 def create_manufacs_main():
@@ -26,3 +27,4 @@ def create_manufacs_main():
     key_data = get_key_data(data)
     create_manufacs(key_data, data)
     return
+# create_manufacs_main()

@@ -19,6 +19,7 @@ def create_rack_role(key_data, data):
             netbox.dcim.rack_roles.create(add_data)
         except pynetbox.RequestError as e:
             print(e.error)
+        # print(add_data)
     return
 
 def create_rack_role_main():
@@ -26,3 +27,4 @@ def create_rack_role_main():
     key_data = get_key_data(data)
     create_rack_role(key_data, data)
     return
+# create_rack_role_main()

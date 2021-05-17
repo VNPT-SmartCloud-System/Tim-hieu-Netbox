@@ -6,7 +6,7 @@ def get_data_rack(numerical_order, data):
     site_name = data['site']['{}' .format(numerical_order)]
     site_id = check_sites(site_name)
     group_name = data['group']['{}' .format(numerical_order)]
-    rack_group_id = check_rack_group(group_name)
+    rack_group_id = check_rack_group(group_name, site_id)
     rack_role = data['role']['{}' .format(numerical_order)]
     rack_role_id = check_rack_roles(rack_role)
     add_data = list()
@@ -37,6 +37,7 @@ def create_rack(key_data, data):
             netbox.dcim.racks.create(add_data)
         except pynetbox.RequestError as e:
             print(e.error)
+        # print(add_data)
     return
 
 def create_rack_main():
@@ -44,3 +45,4 @@ def create_rack_main():
     key_data = get_key_data(data)
     create_rack(key_data, data)
     return
+# create_rack_main()

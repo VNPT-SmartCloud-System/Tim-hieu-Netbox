@@ -58,12 +58,12 @@ def check_rack_roles(role_name):
         rack_role_id = rack_role_info['id']
     return rack_role_id
 
-def check_rack_group(group_name):
-    import create_rack_groups
-    rack_group_info = netbox.dcim.rack_groups.get(name="{}" .format(group_name))
+def check_rack_group(group_name, site):
+    from create_rack_groups import create_rack_group_main
+    rack_group_info = netbox.dcim.rack_groups.get(name="{}" .format(group_name), site_id= site)
     if rack_group_info == None:
-        create_rack_groups.create_rack_group_main()
-        rack_group_info1 = netbox.dcim.rack_groups.get(name="{}" .format(group_name))
+        create_rack_group_main()
+        rack_group_info1 = netbox.dcim.rack_groups.get(name="{}" .format(group_name), site_id= site)
         rack_group_id = rack_group_info1['id']
     else:
         rack_group_id = rack_group_info['id']
@@ -135,12 +135,12 @@ def check_vlan_group(vgroup_name):
         vlan_group_id = vlan_group_info['id']
     return vlan_group_id
 
-def check_vlan(vlan_name):
+def check_vlan(vlan_name, site_id):
     import create_vlans
-    vlan_info = netbox.ipam.vlans.get(name="{}" .format(vlan_name))
+    vlan_info = netbox.ipam.vlans.get(name="{}" .format(vlan_name), site_id = "{}" .format(site_id))
     if vlan_info == None:
         create_vlans.create_vlan_main()
-        vlan_info1 = netbox.ipam.vlans.get(name="{}" .format(vlan_name))
+        vlan_info1 = netbox.ipam.vlans.get(name="{}" .format(vlan_name), site_id = "{}" .format(site_id))
         vlan_id = vlan_info1['id']
     else:
         vlan_id = vlan_info['id']

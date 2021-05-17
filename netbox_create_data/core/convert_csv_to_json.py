@@ -13,6 +13,7 @@ aggregates_json = config.AGGREGATES_JSON
 prefixes_json=config.PREFIXES_JSON
 interface_tpl_json=config.INTERFACE_TPL
 cable_connections_json=config.CABLE_CONNECT
+ip_addr_json=config.IP_ADDR_JSON
 
 def convert_region():
     try:
@@ -120,6 +121,16 @@ def convert_cable_connect():
                                       sheet_name='cable_connections',
                                       engine='openpyxl')
         excel_data_df.to_json('{}' .format(cable_connections_json))
+    except Exception as ex:
+        print(ex)
+    return
+
+def convert_ip_addr():
+    try:
+        excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
+                                      sheet_name='ip_addresses',
+                                      engine='openpyxl')
+        excel_data_df.to_json('{}' .format(ip_addr_json))
     except Exception as ex:
         print(ex)
     return

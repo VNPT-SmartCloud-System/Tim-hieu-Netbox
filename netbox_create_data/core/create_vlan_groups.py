@@ -22,6 +22,7 @@ def create_vlan_group(key_data, data):
             netbox.ipam.vlan_groups.create(add_data)
         except pynetbox.RequestError as e:
             print(e.error)
+        # print(add_data)
     return
 
 def create_vlan_group_main():
@@ -29,3 +30,4 @@ def create_vlan_group_main():
     key_data = get_key_data(data)
     create_vlan_group(key_data, data)
     return
+# create_vlan_group_main()

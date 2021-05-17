@@ -3,10 +3,12 @@ from get_data_json import get_prefixes, get_key_data
 from check_data_netbox import check_sites, check_vlan, check_prefix_role, netbox
 
 def get_data_prefix(numerical_order, data):
+    from create_aggregates import create_aggregates_main
+    create_aggregates_main()
     site_name= data['site']['{}' .format(numerical_order)]
     site_id = check_sites(site_name)
-    vlan_name= data['vlan_name']['{}' .format(numerical_order)]
-    vlan_id = check_vlan(vlan_name)
+    vlan_name= data['vlan']['{}' .format(numerical_order)]
+    vlan_id = check_vlan(vlan_name, site_id)
     role_name = data['role']['{}' .format(numerical_order)]
     role_id = check_prefix_role(role_name)
     add_data = list()

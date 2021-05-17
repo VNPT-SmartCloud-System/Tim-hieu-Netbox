@@ -7,12 +7,12 @@ today = date.today()
 today = today.strftime("%Y-%m-%d")
 
 def get_data_aggregates(numerical_order, data):
-    rir_name = data['rir_name']['{}' .format(numerical_order)]
+    rir_name = data['rir']['{}' .format(numerical_order)]
     rir_id = check_rir(rir_name)
     add_data = list()
     add_data.append(
         dict (
-            prefix= data['aggregates_prefix']['{}' .format(numerical_order)],
+            prefix= data['prefix']['{}' .format(numerical_order)],
             rir= rir_id,
             date_added= str(today),
         )
@@ -26,6 +26,7 @@ def create_aggregates(key_data, data):
             netbox.ipam.aggregates.create(add_data)
         except pynetbox.RequestError as e:
             print(e.error)
+        # print(add_data)
     return
 
 def create_aggregates_main():
@@ -33,3 +34,4 @@ def create_aggregates_main():
     key_data = get_key_data(data)
     create_aggregates(key_data, data)
     return
+# create_aggregates_main()
