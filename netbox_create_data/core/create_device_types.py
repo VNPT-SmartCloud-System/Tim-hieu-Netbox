@@ -1,4 +1,5 @@
 import pynetbox
+from slugify import slugify
 from check_data_netbox import check_manufacs, netbox
 from get_data_json import get_device_types, get_key_data, get_inf_tpls
 
@@ -6,12 +7,14 @@ def get_data_device_type(numerical_order, data):
     manufacturer=data['manufacturer']['{}' .format(numerical_order)]
     manufact_id= check_manufacs(manufacturer)
     device_type = data['model']['{}' .format(numerical_order)]
+    convert_slug = slugify(device_type)
+    slug = convert_slug.lower()
     add_data = list()
     add_data.append(
         dict (
             manufacturer= manufact_id,
             model= device_type,
-            slug= data['slug']['{}' .format(numerical_order)],
+            slug= slug,
             part_number= data['part_number']['{}' .format(numerical_order)],
             is_full_depth= data['is_full_depth']['{}' .format(numerical_order)],
             u_height= data['u_height']['{}' .format(numerical_order)],

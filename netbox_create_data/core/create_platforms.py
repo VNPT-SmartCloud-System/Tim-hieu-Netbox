@@ -1,13 +1,17 @@
 import pynetbox
+from slugify import slugify
 from check_data_netbox import netbox
 from get_data_json import get_devices, get_key_data
 
 def get_platforms(numerical_order, data):
+    platform_name = data['platform']['{}' .format(numerical_order)]
+    convert_slug = slugify(platform_name)
+    slug = convert_slug.lower()
     add_data = list()
     add_data.append(
         dict (
-            name= data['platform']['{}' .format(numerical_order)],
-            slug= data['platform_slug']['{}' .format(numerical_order)],
+            name= platform_name,
+            slug= slug,
         )
     )
     return add_data

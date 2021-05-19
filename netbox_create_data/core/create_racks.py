@@ -1,5 +1,5 @@
 import pynetbox
-from check_data_netbox import check_sites, check_rack_group, check_rack_roles, netbox
+from check_data_netbox import check_sites, check_rack_group, check_rack_roles, check_tenants, netbox
 from get_data_json import get_racks, get_key_data
 
 def get_data_rack(numerical_order, data):
@@ -9,12 +9,15 @@ def get_data_rack(numerical_order, data):
     rack_group_id = check_rack_group(group_name, site_id)
     rack_role = data['role']['{}' .format(numerical_order)]
     rack_role_id = check_rack_roles(rack_role)
+    tenant_name = data['tenant']['{}' .format(numerical_order)]
+    tenant_id = check_tenants(tenant_name)
     add_data = list()
     add_data.append(
         dict (
             name= data['rack_name']['{}' .format(numerical_order)],
             site= site_id,
             group= rack_group_id,
+            tenant = tenant_id,
             status= data['status']['{}' .format(numerical_order)],
             role= rack_role_id,
             serial= data['serial']['{}' .format(numerical_order)],

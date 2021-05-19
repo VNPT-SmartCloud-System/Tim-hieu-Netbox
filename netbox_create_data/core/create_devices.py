@@ -1,6 +1,6 @@
 import pynetbox
 from get_data_json import get_devices, get_key_data
-from check_data_netbox import check_manufacs, check_device_types, check_sites, check_racks, check_device_roles, check_platforms, netbox
+from check_data_netbox import check_manufacs, check_tenants, check_device_types, check_sites, check_racks, check_device_roles, check_platforms, netbox
 
 def get_data_devices(numerical_order, data):
     device_type=data['device_type']['{}' .format(numerical_order)]
@@ -9,6 +9,8 @@ def get_data_devices(numerical_order, data):
     rack=data['rack']['{}' .format(numerical_order)]
     manufacturer=data['manufacturer']['{}' .format(numerical_order)]
     platform=data['platform']['{}' .format(numerical_order)]
+    tenant_name = data['Tenant']['{}' .format(numerical_order)]
+    tenant_id = check_tenants(tenant_name)
     platform_id=check_platforms(platform)
     manufact_id= check_manufacs(manufacturer)
     device_type_id= check_device_types(manufact_id, device_type)
@@ -21,6 +23,7 @@ def get_data_devices(numerical_order, data):
             name= data['name']['{}' .format(numerical_order)],
             device_type= device_type_id,
             device_role= role_id,
+            tenant = tenant_id,
             platform= platform_id,
             serial= data['serial']['{}' .format(numerical_order)],
             asset_tag= data['asset_tag']['{}' .format(numerical_order)],

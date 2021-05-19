@@ -14,6 +14,17 @@ def check_manufacs(manufact_name):
         manufact_id = manufact_info['id']
     return manufact_id
 
+def check_tenants(tenant_name):
+    from create_tenancy import create_tenants_main
+    tenant_info = netbox.tenancy.tenants.get(name="{}" .format(tenant_name))
+    if tenant_info == None:
+        create_tenants_main()
+        tenant_info1 = netbox.tenancy.tenants.get(name="{}" .format(tenant_name))
+        tenant_id = tenant_info1['id']
+    else:
+        tenant_id = tenant_info['id']
+    return tenant_id
+
 def check_sites(site_name):
     import create_sites
     site_info = netbox.dcim.sites.get(name="{}" .format(site_name))

@@ -1,13 +1,17 @@
 import pynetbox
+from slugify import slugify
 from check_data_netbox import netbox
 from get_data_json import get_racks, get_key_data
 
 def get_data_rack_role(numerical_order, data):
+    role_name = data['role']['{}' .format(numerical_order)]
+    convert_slug = slugify(role_name)
+    slug = convert_slug.lower()
     add_data = list()
     add_data.append(
         dict (
-            name= data['role']['{}' .format(numerical_order)],
-            slug= data['role_slug']['{}' .format(numerical_order)],
+            name= role_name,
+            slug= slug,
         )
     )
     return add_data

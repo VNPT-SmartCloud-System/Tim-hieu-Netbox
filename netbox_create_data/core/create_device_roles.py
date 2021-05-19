@@ -1,15 +1,18 @@
 import pynetbox
+from slugify import slugify
 from check_data_netbox import netbox
 from get_data_json import get_device_roles, get_key_data
 
 def get_data_device_role(numerical_order, data):
+    role_name = data['name']['{}' .format(numerical_order)]
+    convert_slug = slugify(role_name)
+    slug = convert_slug.lower()
     add_data = list()
     add_data.append(
         dict (
-            name= data['name']['{}' .format(numerical_order)],
-            slug= data['slug']['{}' .format(numerical_order)],
+            name= role_name,
+            slug= slug,
             vm_role= data['vm_role']['{}' .format(numerical_order)],
-            description= data['description']['{}' .format(numerical_order)],
         )
     )
     return add_data

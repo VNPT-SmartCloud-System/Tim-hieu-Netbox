@@ -2,8 +2,7 @@ import pandas as ps
 import config
 
 netbox_excel_data = config.NETBOX_INFO_EXCEL
-regions_json=config.REGIONS_JSON
-sites_json=config.SITES_JSON
+regions_sites_json=config.REGION_SITE_JSON
 racks_json=config.RACK_JSON
 device_types_json=config.DEVICE_TYPES_JSON
 device_roles_json = config.DEIVE_ROLE_JSON
@@ -15,22 +14,12 @@ interface_tpl_json=config.INTERFACE_TPL
 cable_connections_json=config.CABLE_CONNECT
 ip_addr_json=config.IP_ADDR_JSON
 
-def convert_region():
+def convert_region_site():
     try:
         excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
-                                      sheet_name='regions',
+                                      sheet_name='regions_sites',
                                       engine='openpyxl')
-        excel_data_df.to_json('{}' .format(regions_json))
-    except Exception as ex:
-        print(ex)
-    return 
-
-def convert_site():
-    try:
-        excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
-                                      sheet_name='sites',
-                                      engine='openpyxl')
-        excel_data_df.to_json('{}' .format(sites_json))
+        excel_data_df.to_json('{}' .format(regions_sites_json))
     except Exception as ex:
         print(ex)
     return
@@ -118,8 +107,9 @@ def convert_inf_tpl():
 def convert_cable_connect():
     try:
         excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
-                                      sheet_name='cable_connections',
+                                      sheet_name='Thong tin IP',
                                       engine='openpyxl')
+        excel_data_df = excel_data_df.fillna(method='ffill', axis=0)
         excel_data_df.to_json('{}' .format(cable_connections_json))
     except Exception as ex:
         print(ex)

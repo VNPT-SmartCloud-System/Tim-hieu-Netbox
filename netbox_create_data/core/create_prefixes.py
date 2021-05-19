@@ -9,8 +9,8 @@ def get_data_prefix(numerical_order, data):
     site_id = check_sites(site_name)
     vlan_name= data['vlan']['{}' .format(numerical_order)]
     vlan_id = check_vlan(vlan_name, site_id)
-    role_name = data['role']['{}' .format(numerical_order)]
-    role_id = check_prefix_role(role_name)
+    # role_name = data['role']['{}' .format(numerical_order)]
+    # role_id = check_prefix_role(role_name)
     add_data = list()
     add_data.append(
         dict (
@@ -18,7 +18,7 @@ def get_data_prefix(numerical_order, data):
             site= site_id,
             vlan= vlan_id,
             status= data['status']['{}' .format(numerical_order)],
-            role= role_id,
+            # role= role_id,
             is_pool = data['is_pool']['{}' .format(numerical_order)],
         )
     )

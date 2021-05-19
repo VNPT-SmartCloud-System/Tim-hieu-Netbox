@@ -1,6 +1,5 @@
 NETBOX_INFO_EXCEL = '../file_data/netbox_info.xlsx'
-REGIONS_JSON = '../file_data/regions.json'
-SITES_JSON = '../file_data/sites.json'
+REGION_SITE_JSON = '../file_data/regions_sites.json'
 RACK_JSON = '../file_data/racks.json'
 DEVICE_TYPES_JSON = '../file_data/device_types.json'
 DEVICES_JSON = '../file_data/devices.json'

@@ -1,15 +1,17 @@
 import pynetbox
-from check_data_netbox import check_regions, netbox
-from get_data_json import get_regions, get_key_data
+from slugify import slugify
+from check_data_netbox import netbox
+from get_data_json import get_regions_sites, get_key_data
 
 def get_data_region(numerical_order, data):
-    # region_name=data['parent']['{}' .format(numerical_order)]
-    # region_id= check_regions(region_name)
+    region_name = data['region']['{}' .format(numerical_order)]
+    convert_slug = slugify(region_name)
+    slug = convert_slug.lower()
     add_data = list()
     add_data.append(
         dict (
-            name= data['region']['{}' .format(numerical_order)],
-            slug= data['slug']['{}' .format(numerical_order)],
+            name= region_name,
+            slug= slug,
             # parent= region_id,
         )
     )
@@ -26,7 +28,7 @@ def create_region(key_data, data):
     return
 
 def create_region_main():
-    data = get_regions()
+    data = get_regions_sites()
     key_data = get_key_data(data)
     create_region(key_data, data)
     return

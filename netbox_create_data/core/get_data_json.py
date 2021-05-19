@@ -1,8 +1,7 @@
 import config
 import json
 
-regions_json=config.REGIONS_JSON
-sites_json=config.SITES_JSON
+regions_sites_json=config.REGION_SITE_JSON
 racks_json=config.RACK_JSON
 device_types_json=config.DEVICE_TYPES_JSON
 device_roles_json = config.DEIVE_ROLE_JSON
@@ -14,17 +13,10 @@ interface_tpl_json=config.INTERFACE_TPL
 cable_connections_json=config.CABLE_CONNECT
 ip_addr_json=config.IP_ADDR_JSON
 
-def get_regions():
-    from convert_csv_to_json import convert_region
-    convert_region()
-    with open('{}' .format(regions_json)) as json_file:
-        data_region = json.load(json_file)
-    return data_region
-
-def get_sites():
+def get_regions_sites():
     from convert_csv_to_json import convert_site
     convert_site()
-    with open('{}' .format(sites_json)) as json_file:
+    with open('{}' .format(regions_sites_json)) as json_file:
         data_site = json.load(json_file)
     return data_site
 

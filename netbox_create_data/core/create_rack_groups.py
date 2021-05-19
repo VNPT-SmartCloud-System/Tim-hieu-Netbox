@@ -1,15 +1,19 @@
 import pynetbox
+from slugify import slugify
 from check_data_netbox import check_sites, netbox
 from get_data_json import get_racks, get_key_data
 
 def get_data_group(numerical_order, data):
     site_name=data['site']['{}' .format(numerical_order)]
     site_id = check_sites(site_name)
+    group_name = data['group']['{}' .format(numerical_order)]
+    convert_slug = slugify(group_name)
+    slug = convert_slug.lower()
     add_data = list()
     add_data.append(
         dict (
-            name= data['group']['{}' .format(numerical_order)],
-            slug= data['group_slug']['{}' .format(numerical_order)],
+            name= group_name,
+            slug= slug,
             site= site_id,
         )
     )

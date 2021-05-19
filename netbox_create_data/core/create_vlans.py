@@ -7,8 +7,8 @@ def get_data_vlan(numerical_order, data):
     site_id = check_sites(site_name)
     group_name =data['vlan_group']['{}' .format(numerical_order)]
     group_id = check_vlan_group(group_name)
-    role_name = data['role']['{}' .format(numerical_order)]
-    role_id = check_prefix_role(role_name)
+    # role_name = data['role']['{}' .format(numerical_order)]
+    # role_id = check_prefix_role(role_name)
     add_data = list()
     add_data.append(
         dict (
@@ -17,7 +17,7 @@ def get_data_vlan(numerical_order, data):
             vid= data['vid']['{}' .format(numerical_order)],
             name= data['vlan_name']['{}' .format(numerical_order)],
             status = data['status']['{}' .format(numerical_order)],
-            role = role_id,
+            # role = role_id,
         )
     )
     return add_data
