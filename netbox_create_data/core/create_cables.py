@@ -10,11 +10,11 @@ def get_data_cable(numerical_order, data):
     if device_name_a == None:
         add_data = None
     else:
-        interface_id_a = check_interface(device_name_a, inf_name_a)
-        interface_id_b = check_interface(device_name_b, inf_name_b)
-        if inf_name_a == 'no':
+        if str(inf_name_a) == 'no':
             add_data = None
         else:
+            interface_id_a = check_interface(device_name_a, str(inf_name_a))
+            interface_id_b = check_interface(device_name_b, str(inf_name_b))
             add_data = list()
             add_data.append(
                 dict (
@@ -48,4 +48,3 @@ def create_cable_main():
     key_data = get_key_data(data)
     create_cables(key_data, data)
     return
-create_cable_main()

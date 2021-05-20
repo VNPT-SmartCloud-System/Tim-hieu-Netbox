@@ -8,7 +8,7 @@ def get_data_ip(numerical_order, data):
     inf_name = data['Interface']['{}' .format(numerical_order)]
     Bonding = data['Bonding']['{}' .format(numerical_order)]
     bond_id = check_interface(device_name, Bonding)
-    inf_id = check_interface(device_name, inf_name)
+    inf_id = check_interface(device_name, str(inf_name))
     ip = data['IP address']['{}' .format(numerical_order)]
     prefix = data['Subnet']['{}' .format(numerical_order)]
     tenant_name = data['Người sở hữu']['{}' .format(numerical_order)]
@@ -19,7 +19,7 @@ def get_data_ip(numerical_order, data):
     if ip == None:
         ip_addr = "0.0.0.0/24"
     else:
-        ip_addr = ip+"/{}" .format(prefix)
+        ip_addr = ip+"/{}" .format(int(prefix))
     Bond = re.search("Bond*", str(Bonding))
     if Bond:
         add_data = list()
@@ -71,4 +71,3 @@ def create_ipaddr_main():
     key_data = get_key_data(data)
     create_ipaddr(key_data, data)
     return
-create_ipaddr_main()

@@ -184,5 +184,5 @@ def check_interface(device_name, inf_name):
         interface_info = netbox.dcim.interfaces.get(device='{}' .format(device_name), name='{}' .format(inf_name))
         interface_id = interface_info['id']
         return interface_id
-    except:
-        print("Device name or Interface name false")
+    except Exception as ex:
+        print(ex)
