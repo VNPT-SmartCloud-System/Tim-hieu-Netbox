@@ -2,14 +2,13 @@ NETBOX_INFO_EXCEL = '../file_data/netbox_info.xlsx'
 REGION_SITE_JSON = '../file_data/regions_sites.json'
 RACK_JSON = '../file_data/racks.json'
 DEVICE_TYPES_JSON = '../file_data/device_types.json'
+DEIVE_ROLE_JSON = '../file_data/device_roles.json'
 DEVICES_JSON = '../file_data/devices.json'
 VLANS_JSON = '../file_data/vlans.json'
 AGGREGATES_JSON = '../file_data/aggregates.json'
-PREFIXES_JSON = '../file_data/prefixes.json'
+# PREFIXES_JSON = '../file_data/prefixes.json'
 INTERFACE_TPL = '../file_data/interface_templates.json'
 CABLE_CONNECT = '../file_data/cable_connections.json'
-DEIVE_ROLE_JSON = '../file_data/device_roles.json'
-IP_ADDR_JSON = '../file_data/ip_addresses.json'
 # Đường dẫn truy cập netbox
 URL_NB ="http://10.10.35.191:8000"
 # Token của tài khoản admin netbox

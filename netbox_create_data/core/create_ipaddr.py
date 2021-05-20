@@ -12,7 +12,10 @@ def get_data_ip(numerical_order, data):
     ip = data['IP address']['{}' .format(numerical_order)]
     prefix = data['Subnet']['{}' .format(numerical_order)]
     tenant_name = data['Người sở hữu']['{}' .format(numerical_order)]
-    tenant_id = check_tenants(tenant_name)
+    if tenant_name == None:
+        tenant_id =None
+    else:
+        tenant_id = check_tenants(tenant_name)
     if ip == None:
         ip_addr = "0.0.0.0/24"
     else:
@@ -56,16 +59,15 @@ def create_ipaddr(key_data, data):
         if add_data == None:
             continue
         else:
-            # try:
-            #     netbox.ipam.ip_addresses.create(add_data)
-            # except pynetbox.RequestError as e:
-            #     print(e.error)
-            print(add_data)
+            try:
+                netbox.ipam.ip_addresses.create(add_data)
+            except pynetbox.RequestError as e:
+                print(e.error)
+            # print(add_data)
     return
 
 def create_ipaddr_main():
     data = get_cables()
-    print(data)
     key_data = get_key_data(data)
     create_ipaddr(key_data, data)
     return

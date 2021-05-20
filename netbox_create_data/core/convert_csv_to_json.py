@@ -7,17 +7,15 @@ racks_json=config.RACK_JSON
 device_types_json=config.DEVICE_TYPES_JSON
 device_roles_json = config.DEIVE_ROLE_JSON
 devices_json=config.DEVICES_JSON
-vlans_json=config.VLANS_JSON
 aggregates_json = config.AGGREGATES_JSON
-prefixes_json=config.PREFIXES_JSON
 interface_tpl_json=config.INTERFACE_TPL
 cable_connections_json=config.CABLE_CONNECT
-ip_addr_json=config.IP_ADDR_JSON
+vlans_json=config.VLANS_JSON
 
 def convert_region_site():
     try:
         excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
-                                      sheet_name='regions_sites',
+                                      sheet_name='Region va Site',
                                       engine='openpyxl')
         excel_data_df.to_json('{}' .format(regions_sites_json))
     except Exception as ex:
@@ -37,7 +35,7 @@ def convert_rack():
 def convert_device_type():
     try:
         excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
-                                      sheet_name='device_types',
+                                      sheet_name='Kieu thiet bi',
                                       engine='openpyxl')
         excel_data_df.to_json('{}' .format(device_types_json))
     except Exception as ex:
@@ -47,7 +45,7 @@ def convert_device_type():
 def convert_device_role():
     try:
         excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
-                                      sheet_name='device_roles',
+                                      sheet_name='Vai tro thiet bi',
                                       engine='openpyxl')
         excel_data_df.to_json('{}' .format(device_roles_json))
     except Exception as ex:
@@ -57,7 +55,7 @@ def convert_device_role():
 def convert_device():
     try:
         excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
-                                      sheet_name='devices',
+                                      sheet_name='Thiet bi',
                                       engine='openpyxl')
         excel_data_df.to_json('{}' .format(devices_json))
     except Exception as ex:
@@ -77,22 +75,22 @@ def convert_vlans():
 def convert_aggregates():
     try:
         excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
-                                      sheet_name='aggregates',
+                                      sheet_name='Aggregates',
                                       engine='openpyxl')
         excel_data_df.to_json('{}' .format(aggregates_json))
     except Exception as ex:
         print(ex)
     return
 
-def convert_prefix():
-    try:
-        excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
-                                      sheet_name='prefixes',
-                                      engine='openpyxl')
-        excel_data_df.to_json('{}' .format(prefixes_json))
-    except Exception as ex:
-        print(ex)
-    return
+# def convert_prefix():
+#     try:
+#         excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
+#                                       sheet_name='prefixes',
+#                                       engine='openpyxl')
+#         excel_data_df.to_json('{}' .format(prefixes_json))
+#     except Exception as ex:
+#         print(ex)
+#     return
 
 def convert_inf_tpl():
     try:
@@ -115,13 +113,13 @@ def convert_cable_connect():
         print(ex)
     return
 
-def convert_ip_addr():
-    try:
-        excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
-                                      sheet_name='ip_addresses',
-                                      engine='openpyxl')
-        excel_data_df.to_json('{}' .format(ip_addr_json))
-    except Exception as ex:
-        print(ex)
-    return
+# def convert_ip_addr():
+#     try:
+#         excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
+#                                       sheet_name='ip_addresses',
+#                                       engine='openpyxl')
+#         excel_data_df.to_json('{}' .format(ip_addr_json))
+#     except Exception as ex:
+#         print(ex)
+#     return
 
