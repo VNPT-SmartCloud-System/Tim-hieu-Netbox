@@ -11,6 +11,11 @@ interface_tpl_json=config.INTERFACE_TPL
 cable_connections_json=config.CABLE_CONNECT
 vlans_json=config.VLANS_JSON
 
+'''
+Module này chứa các funtion để lấy dữ liệu ra khỏi các file json
+    và 1 funtion dùng để lấy ra các key trong json.
+'''
+
 def get_regions_sites():
     from convert_csv_to_json import convert_region_site
     convert_region_site()

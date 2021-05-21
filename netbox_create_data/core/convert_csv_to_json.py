@@ -12,6 +12,11 @@ interface_tpl_json=config.INTERFACE_TPL
 cable_connections_json=config.CABLE_CONNECT
 vlans_json=config.VLANS_JSON
 
+'''
+Module này chứa các funtion để convert thông tin các sheet trong file excel thành json
+    sau đó lưu vào các file json đã tạo trước đó.
+'''
+
 def convert_region_site():
     try:
         excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
