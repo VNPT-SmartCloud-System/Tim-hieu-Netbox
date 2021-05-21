@@ -11,7 +11,7 @@ def get_data_aggregates(numerical_order, data):
     if rir_name == None:
         add_data = None
     else:
-        rir_id = check_rir(rir_name)
+        rir_id = check_rir(str(rir_name))
         tenant_name = data['Người sở hữu']['{}' .format(numerical_order)]
         if tenant_name == None:
             tenant_id = None

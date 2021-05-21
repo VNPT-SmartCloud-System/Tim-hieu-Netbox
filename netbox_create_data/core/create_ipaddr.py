@@ -13,15 +13,15 @@ def get_data_ip(numerical_order, data):
     prefix = data['Subnet']['{}' .format(numerical_order)]
     tenant_name = data['Người sở hữu']['{}' .format(numerical_order)]
     if tenant_name == None:
-        tenant_id =None
+        tenant_id = None
     else:
         tenant_id = check_tenants(tenant_name)
-    if ip == None:
-        ip_addr = "0.0.0.0/24"
+    if ip == 'no':
+        ip_addr = None
     else:
         ip_addr = ip+"/{}" .format(int(prefix))
-    Bond = re.search("Bond*", str(Bonding))
-    if Bond:
+    bond = re.search("Bond*", str(Bonding))
+    if bond:
         add_data = list()
         add_data.append(
             dict (
@@ -51,12 +51,12 @@ def get_data_ip(numerical_order, data):
                 # description= data['description']['{}' .format(numerical_order)],
             )
         )
-    return add_data
+    return add_data, ip_addr
 
 def create_ipaddr(key_data, data):
     for numerical_order in key_data:
-        add_data = get_data_ip(numerical_order, data)
-        if add_data == None:
+        add_data, ip_addr = get_data_ip(numerical_order, data)
+        if add_data == None or ip_addr == None:
             continue
         else:
             try:

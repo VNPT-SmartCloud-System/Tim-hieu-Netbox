@@ -3,8 +3,6 @@ from get_data_json import get_vlans, get_key_data
 from check_data_netbox import check_sites, check_vlan, check_prefix_role, netbox
 
 def get_data_prefix(numerical_order, data):
-    from create_aggregates import create_aggregates_main
-    create_aggregates_main()
     site_name= data['Tên DC']['{}' .format(numerical_order)]
     prefix_vlan = data['Prefix']['{}' .format(numerical_order)]
     vlan_name= data['VLAN']['{}' .format(numerical_order)]
@@ -41,6 +39,8 @@ def create_prefix(key_data, data):
     return
 
 def create_prefix_main():
+    from create_aggregates import create_aggregates_main
+    create_aggregates_main()
     data = get_vlans()
     key_data = get_key_data(data)
     create_prefix(key_data, data)
