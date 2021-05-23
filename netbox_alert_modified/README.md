@@ -76,3 +76,11 @@ systemctl daemon-reload
 systemctl start webhook-netbox
 systemctl status webhook-netbox
 ```
+
+# Add webhook netbox
+
+Trên netbox tại mục `Add webhook`, url của `HTTP Request` hãy đặt là `http://<ip_or_domain>:5000/webhook/<random_number>`
+
+Với: 
+- `ip_or_domain`: là ip hoặc domain của server chạy tool này
+- `random_number`: là 1 số tự nhiên ngẫu nhiên
