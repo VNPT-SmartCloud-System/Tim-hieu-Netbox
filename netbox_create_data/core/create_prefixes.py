@@ -9,21 +9,25 @@ def get_data_prefix(numerical_order, data):
     if prefix_vlan == None or vlan_name == None:
         add_data = None
     else:
-        site_id = check_sites(site_name)
-        vlan_id = check_vlan(vlan_name, site_id)
-        # role_name = data['role']['{}' .format(numerical_order)]
-        # role_id = check_prefix_role(role_name)
-        add_data = list()
-        add_data.append(
-            dict (
-                prefix= prefix_vlan,
-                site= site_id,
-                vlan= vlan_id,
-                status= 'active',
-                # role= role_id,
-                is_pool = 'false',
+        prefix_inf = netbox.ipam.prefixes.get(prefix='{}' .format(prefix_vlan))
+        if prefix_inf == None:
+            site_id = check_sites(site_name)
+            vlan_id = check_vlan(vlan_name, site_id)
+            # role_name = data['role']['{}' .format(numerical_order)]
+            # role_id = check_prefix_role(role_name)
+            add_data = list()
+            add_data.append(
+                dict (
+                    prefix= prefix_vlan,
+                    site= site_id,
+                    vlan= vlan_id,
+                    status= 'active',
+                    # role= role_id,
+                    is_pool = 'false',
+                )
             )
-        )
+        else:
+            add_data = None
     return add_data
 
 def create_prefix(key_data, data):
@@ -45,3 +49,4 @@ def create_prefix_main():
     key_data = get_key_data(data)
     create_prefix(key_data, data)
     return
+# create_prefix_main()

@@ -22,35 +22,43 @@ def get_data_ip(numerical_order, data):
         ip_addr = ip+"/{}" .format(int(prefix))
     bond = re.search("Bond*", str(Bonding))
     if bond:
-        add_data = list()
-        add_data.append(
-            dict (
-                address= ip_addr,
-                assigned_object_type= 'dcim.interface',
-                assigned_object_id= bond_id,
-                tenant= tenant_id,
-                status= 'active',
-                # role= data['role']['{}' .format(numerical_order)],
-                # dns_name= data['dns_name']['{}' .format(numerical_order)],
-                # description= data['description']['{}' .format(numerical_order)],
+        info_ip = netbox.ipam.ip_addresses.get(address='{}' .format(ip_addr), device='{}' .format(device_name))
+        if info_ip == None:
+            add_data = list()
+            add_data.append(
+                dict (
+                    address= ip_addr,
+                    assigned_object_type= 'dcim.interface',
+                    assigned_object_id= bond_id,
+                    tenant= tenant_id,
+                    status= 'active',
+                    # role= data['role']['{}' .format(numerical_order)],
+                    # dns_name= data['dns_name']['{}' .format(numerical_order)],
+                    # description= data['description']['{}' .format(numerical_order)],
+                )
             )
-        )
+        else:
+            add_data = None
     elif inf_name == 'no':
         add_data = None
     else:
-        add_data = list()
-        add_data.append(
-            dict (
-                address= ip_addr,
-                assigned_object_type= 'dcim.interface',
-                assigned_object_id= inf_id,
-                tenant= tenant_id,
-                status= 'active',
-                # role= data['role']['{}' .format(numerical_order)],
-                # dns_name= data['dns_name']['{}' .format(numerical_order)],
-                # description= data['description']['{}' .format(numerical_order)],
+        info_ip = netbox.ipam.ip_addresses.get(address='{}' .format(ip_addr), device='{}' .format(device_name))
+        if info_ip == None:
+            add_data = list()
+            add_data.append(
+                dict (
+                    address= ip_addr,
+                    assigned_object_type= 'dcim.interface',
+                    assigned_object_id= inf_id,
+                    tenant= tenant_id,
+                    status= 'active',
+                    # role= data['role']['{}' .format(numerical_order)],
+                    # dns_name= data['dns_name']['{}' .format(numerical_order)],
+                    # description= data['description']['{}' .format(numerical_order)],
+                )
             )
-        )
+        else:
+            add_data = None
     return add_data, ip_addr
 
 def create_ipaddr(key_data, data):
@@ -71,3 +79,4 @@ def create_ipaddr_main():
     key_data = get_key_data(data)
     create_ipaddr(key_data, data)
     return
+# create_ipaddr_main()

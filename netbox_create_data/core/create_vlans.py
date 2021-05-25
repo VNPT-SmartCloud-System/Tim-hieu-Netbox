@@ -10,21 +10,25 @@ def get_data_vlan(numerical_order, data):
         add_data = None
     else:
         site_id = check_sites(site_name)
+        vlan_inf = netbox.ipam.vlans.get(name="{}" .format(vlan_name), site_id = "{}" .format(site_id))
         # group_name =data['vlan_group']['{}' .format(numerical_order)]
         # group_id = check_vlan_group(group_name)
         # role_name = data['role']['{}' .format(numerical_order)]
         # role_id = check_prefix_role(role_name)
-        add_data = list()
-        add_data.append(
-            dict (
-                site= site_id,
-                # group= group_id,
-                vid= vlan_id,
-                name= vlan_name,
-                status = 'active',
-                # role = role_id,
+        if vlan_inf == None:
+            add_data = list()
+            add_data.append(
+                dict (
+                    site= site_id,
+                    # group= group_id,
+                    vid= vlan_id,
+                    name= vlan_name,
+                    status = 'active',
+                    # role = role_id,
+                )
             )
-        )
+        else:
+            add_data = None
     return add_data
 
 def create_vlan(key_data, data):
