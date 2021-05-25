@@ -24,7 +24,7 @@ def create_inf_template(key_data, data):
     for numerical_order in key_data:
         device_type_id, interface_type, count_inf, types, mgmt_only, manufacturer = get_inf_template(numerical_order, data)
         if device_type_id == None:
-            continue
+            break
         else:
             if type(count_inf) == int:
                 inf = 0

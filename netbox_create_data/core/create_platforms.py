@@ -1,10 +1,10 @@
 import pynetbox
 from slugify import slugify
 from check_data_netbox import netbox
-from get_data_json import get_devices, get_key_data
+from get_data_json import get_platform, get_key_data
 
 def get_platforms(numerical_order, data):
-    platform_name = data['Hệ điều hành']['{}' .format(numerical_order)]
+    platform_name = data['Tên']['{}' .format(numerical_order)]
     if platform_name == None:
         add_data = None
     else:
@@ -33,8 +33,7 @@ def create_platforms(key_data, data):
     return
 
 def create_platforms_main():
-    data = get_devices()
+    data = get_platform()
     key_data = get_key_data(data)
     create_platforms(key_data, data)
     return
-# create_platforms_main()

@@ -7,27 +7,24 @@ def get_data_cable(numerical_order, data):
     inf_name_a = data['Interface']['{}' .format(numerical_order)]
     device_name_b = data['Thiết bị kết nối']['{}' .format(numerical_order)]
     inf_name_b = data['Cổng đích']['{}' .format(numerical_order)]
-    if device_name_a == None:
+    if device_name_a == None or str(inf_name_a) == 'no':
         add_data = None
     else:
-        if str(inf_name_a) == 'no':
-            add_data = None
-        else:
-            interface_id_a = check_interface(device_name_a, str(inf_name_a))
-            interface_id_b = check_interface(device_name_b, str(inf_name_b))
-            add_data = list()
-            add_data.append(
-                dict (
-                    termination_a_type= "dcim.interface",
-                    termination_a_id= interface_id_a,
-                    termination_b_type= "dcim.interface",
-                    termination_b_id= interface_id_b,
-                    type= data['Loại cáp']['{}' .format(numerical_order)],
-                    status= 'connected',
-                    length= data['Độ dài cáp']['{}' .format(numerical_order)],
-                    length_unit= 'm',
-                )
+        interface_id_a = check_interface(device_name_a, str(inf_name_a))
+        interface_id_b = check_interface(device_name_b, str(inf_name_b))
+        add_data = list()
+        add_data.append(
+            dict (
+                termination_a_type= "dcim.interface",
+                termination_a_id= interface_id_a,
+                termination_b_type= "dcim.interface",
+                termination_b_id= interface_id_b,
+                type= data['Loại cáp']['{}' .format(numerical_order)],
+                status= 'connected',
+                length= data['Độ dài cáp']['{}' .format(numerical_order)],
+                length_unit= 'm',
             )
+        )
     return add_data
 
 def create_cables(key_data, data):
@@ -48,3 +45,4 @@ def create_cable_main():
     key_data = get_key_data(data)
     create_cables(key_data, data)
     return
+# create_cable_main()

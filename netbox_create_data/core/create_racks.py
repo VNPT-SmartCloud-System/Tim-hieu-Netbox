@@ -34,7 +34,7 @@ def get_data_rack(numerical_order, data):
                 outer_width= data['Chiều rộng bên ngoài']['{}' .format(numerical_order)],
                 outer_depth= data['Chiều sâu bên ngoài']['{}' .format(numerical_order)],
                 outer_unit= data['Đơn vị']['{}' .format(numerical_order)],
-                comments= data['Ghi chú']['{}' .format(numerical_order)],
+                # comments= data['Ghi chú']['{}' .format(numerical_order)],
                 u_height= data['Số U của rack']['{}' .format(numerical_order)],
             )
         )

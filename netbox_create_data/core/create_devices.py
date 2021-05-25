@@ -61,11 +61,11 @@ def get_data_devices(numerical_order, data):
                     position= position,
                     face= data['Rack face']['{}' .format(numerical_order)],
                     status= data['Trạng thái']['{}' .format(numerical_order)],
-                    comments=data['Ghi chú']['{}' .format(numerical_order)],
+                    # comments=data['Ghi chú']['{}' .format(numerical_order)],
                 )
             )
         else:
-            print("Vi tri {} trên device {} đã được đặt thiết bị" .format(position, rack))
+            print("Vi tri {} trên racks {} đã được đặt thiết bị" .format(position, rack))
             add_data = None
     return add_data
 
@@ -79,7 +79,7 @@ def create_devices(key_data, data):
                 netbox.dcim.devices.create(add_data)
             except pynetbox.RequestError as e:
                 print(e.error)
-            # print(add_data)
+            print(add_data)
     return
 
 def create_devices_main():

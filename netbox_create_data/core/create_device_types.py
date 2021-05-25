@@ -40,8 +40,10 @@ def create_device_type(key_data, data):
 
 def create_device_type_main():
     from create_interface_tpl import create_inf_template_main
+    from create_platforms import create_platforms_main
     data = get_device_types()
     key_data = get_key_data(data)
     create_device_type(key_data, data)
     create_inf_template_main()
+    create_platforms_main()
     return

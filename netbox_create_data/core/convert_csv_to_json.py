@@ -16,6 +16,7 @@ aggregates_json = config.AGGREGATES_JSON
 interface_tpl_json=config.INTERFACE_TPL
 cable_connections_json=config.CABLE_CONNECT
 vlans_json=config.VLANS_JSON
+platform_json=config.PLATFORM
 
 # Lấy thông tin về tên sheet
 regions_sites = config.regions_sites
@@ -27,8 +28,7 @@ devices = config.devices
 aggregates= config.aggregates
 vlans = config.vlans
 cable_ip = config.cable_ip
-
-# Các hàm chuyển excel sang json 
+platform = config.platform
 
 def convert_region_site():
     try:
@@ -140,3 +140,13 @@ def convert_cable_connect():
 #     except Exception as ex:
 #         print(ex)
 #     return
+
+def convert_platform():
+    try:
+        excel_data_df = ps.read_excel('{}' .format(netbox_excel_data),
+                                      sheet_name='{}' .format(platform),
+                                      engine='openpyxl')
+        excel_data_df.to_json('{}' .format(platform_json))
+    except Exception as ex:
+        print(ex)
+    return

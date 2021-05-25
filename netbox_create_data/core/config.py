@@ -21,6 +21,8 @@ AGGREGATES_JSON = '../file_data/aggregates.json'
 INTERFACE_TPL = '../file_data/interface_templates.json'
 # Đường dẫn file json chứa thông tin về cable
 CABLE_CONNECT = '../file_data/cable_connections.json'
+# hệ điều hành 
+PLATFORM = '../file_data/platforms.json'
 
 """
 Cấu hình tên sheet trong excel
@@ -43,6 +45,8 @@ aggregates= "Aggregates"
 vlans = "vlans"
 # Sheet chứa thông tin các kết nối, địa chỉ ip
 cable_ip = "Thong tin IP"
+# Sheet chứa thông tin về hệ điều hành
+platform = "Platform"
 
 """
 Cấu hình truy cập netbox

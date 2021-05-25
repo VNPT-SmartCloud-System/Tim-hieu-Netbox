@@ -11,26 +11,34 @@ def get_inf_template(numerical_order, data):
     Bonding = data['Bonding']['{}' .format(numerical_order)]
     device_name_a = data['Tên thiết bị']['{}' .format(numerical_order)]
     inf_name_a = data['Interface']['{}' .format(numerical_order)]
+    Bond_switch = data['sw bond']['{}' .format(numerical_order)]
+    device_name_b = data['Thiết bị kết nối']['{}' .format(numerical_order)]
+    inf_name_b = data['Cổng đích']['{}' .format(numerical_order)]
     bond = re.search("Bond*", str(Bonding))
-    if bond:
-        bond_id = check_interface(device_name_a, Bonding)
+    sw_bond = re.search("Po*", str(Bond_switch))
+    if bond and sw_bond:
+        bond_id_a = check_interface(device_name_a, Bonding)
+        bond_id_b = check_interface(device_name_b, Bond_switch)
     else:
-        bond_id = None
-    return bond_id, inf_name_a, device_name_a
+        bond_id_a = None
+        bond_id_b = None
+    return bond_id_a, bond_id_b, inf_name_a, device_name_a, inf_name_b, device_name_b
 
 def update_inf_lag_parent(key_data, data):
     """
     Kiểm tra, nếu bond_id là None thì bỏ qua, nếu không None thì tiếp tục xử lý
     """
     for numerical_order in key_data:
-        bond_id, inf_name_a, device_name_a = get_inf_template(numerical_order, data)
-        if bond_id == None:
+        bond_id_a, bond_id_b, inf_name_a, device_name_a, inf_name_b, device_name_b = get_inf_template(numerical_order, data)
+        if bond_id_a == None or bond_id_b == None:
             continue
         else:
             # bond_id không None, thực hiện update Bonding là parent của interface
             try:
                 interface_info = netbox.dcim.interfaces.get(device='{}' .format(device_name_a), name='{}' .format(inf_name_a))
-                interface_info.update({"lag": "{}" .format(bond_id)})
+                interface_info.update({"lag": "{}" .format(bond_id_a)})
+                interface_info1 = netbox.dcim.interfaces.get(device='{}' .format(device_name_b), name='{}' .format(inf_name_b))
+                interface_info1.update({"lag": "{}" .format(bond_id_b)})
             except Exception as ex:
                 print(ex)
     return

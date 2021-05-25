@@ -10,6 +10,7 @@ aggregates_json = config.AGGREGATES_JSON
 interface_tpl_json=config.INTERFACE_TPL
 cable_connections_json=config.CABLE_CONNECT
 vlans_json=config.VLANS_JSON
+platform_json=config.PLATFORM
 
 '''
 Module này chứa các funtion để lấy dữ liệu ra khỏi các file json
@@ -92,6 +93,13 @@ def get_cables():
 #     with open('{}' .format(ip_addr_json)) as json_file:
 #         data_ip_addr = json.load(json_file)
 #     return data_ip_addr
+
+def get_platform():
+    from convert_csv_to_json import convert_platform
+    convert_platform()
+    with open('{}' .format(platform_json)) as json_file:
+        data_ip_addr = json.load(json_file)
+    return data_ip_addr
 
 def get_key_data(data):
     key_data = []

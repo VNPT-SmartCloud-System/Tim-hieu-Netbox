@@ -44,6 +44,7 @@ def create_sites(key_data, data):
                 netbox.dcim.sites.create(add_data)
             except pynetbox.RequestError as e:
                 print(e.error)
+            # print(add_data)
     return
 
 def create_site_main():
