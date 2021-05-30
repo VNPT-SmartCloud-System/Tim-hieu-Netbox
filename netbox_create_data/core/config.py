@@ -2,7 +2,7 @@
 Cấu hình đường dẫn excel và các file json
 """
 # Đường dẫn file excel
-NETBOX_INFO_EXCEL = '../file_data/netbox_info.xlsx'
+NETBOX_INFO_EXCEL = './uploads/netbox_info.xlsx'
 # Đường dẫn file json chứa thông tin region và site
 REGION_SITE_JSON = '../file_data/regions_sites.json'
 # Đường dẫn file json chứa thông tin racks
@@ -52,6 +52,6 @@ platform = "Platform"
 Cấu hình truy cập netbox
 """
 # Đường dẫn truy cập netbox
-URL_NB ="http://10.10.35.191:8000"
+URL_NB =
 # Token của tài khoản admin netbox
-TOKEN_NB ="e9694713f6472ad070ddc17d980530f44ea1b670"
+TOKEN_NB =

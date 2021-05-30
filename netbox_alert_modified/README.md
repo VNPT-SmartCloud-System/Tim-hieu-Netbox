@@ -74,6 +74,7 @@ WantedBy=multi-user.target
 ```sh
 systemctl daemon-reload
 systemctl start webhook-netbox
+systemctl enable webhook-netbox --now
 systemctl status webhook-netbox
 ```
 

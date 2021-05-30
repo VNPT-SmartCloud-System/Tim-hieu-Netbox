@@ -1,4 +1,4 @@
-# import pynetbox
+import contextlib
 import re
 from get_data_json import get_cables, get_key_data
 from check_data_netbox import check_interface, netbox
@@ -31,21 +31,31 @@ def update_inf_lag_parent(key_data, data):
     for numerical_order in key_data:
         bond_id_a, bond_id_b, inf_name_a, device_name_a, inf_name_b, device_name_b = get_inf_template(numerical_order, data)
         if bond_id_a == None or bond_id_b == None:
+            # line_in_excel = int(numerical_order) + 2
+            # print("[GỘP INTERFACE THÀNH BOND] - dòng {}: update bond false" .format(line_in_excel))
             continue
         else:
             # bond_id không None, thực hiện update Bonding là parent của interface
             try:
-                interface_info = netbox.dcim.interfaces.get(device='{}' .format(device_name_a), name='{}' .format(inf_name_a))
-                interface_info.update({"lag": "{}" .format(bond_id_a)})
-                interface_info1 = netbox.dcim.interfaces.get(device='{}' .format(device_name_b), name='{}' .format(inf_name_b))
-                interface_info1.update({"lag": "{}" .format(bond_id_b)})
+                with open('/var/log/logrunning.log', 'w') as f:
+                    with contextlib.redirect_stdout(f):
+                        interface_info = netbox.dcim.interfaces.get(device='{}' .format(device_name_a), name='{}' .format(inf_name_a))
+                        interface_info.update({"lag": "{}" .format(bond_id_a)})
+                        interface_info1 = netbox.dcim.interfaces.get(device='{}' .format(device_name_b), name='{}' .format(inf_name_b))
+                        interface_info1.update({"lag": "{}" .format(bond_id_b)})
             except Exception as ex:
-                print(ex)
+                with open('/var/log/logrunning.log', 'w') as f:
+                    with contextlib.redirect_stdout(f):
+                        print(ex)
     return
 
 def update_lag_main():
     data = get_cables()
     key_data = get_key_data(data)
-    update_inf_lag_parent(key_data, data)
+    try:
+        update_inf_lag_parent(key_data, data)
+        print("Gộp interface thành Bond thành công")
+    except:
+        print("Gộp interface thành Bond không thành công")
     return
 # update_lag_main()

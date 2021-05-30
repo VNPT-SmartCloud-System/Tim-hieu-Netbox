@@ -1,6 +1,7 @@
 from check_data_netbox import check_device_types, check_manufacs, netbox
 from get_data_json import get_inf_tpls, get_key_data
 import pynetbox
+import contextlib
 
 def get_inf_template(numerical_order, data):
     manufacturer=data['Nhà sản xuất']['{}' .format(numerical_order)]
@@ -12,8 +13,13 @@ def get_inf_template(numerical_order, data):
         types = None
         mgmt_only = None
     else:
-        manufact_id= check_manufacs(manufacturer)
-        device_type_id= check_device_types(manufact_id, device_type)
+        try:
+            manufact_id= check_manufacs(manufacturer)
+            device_type_id= check_device_types(manufact_id, device_type)
+        except:
+            line_in_excel = int(numerical_order) + 2
+            print("[TẠO INTERFACE TEMPLATE] - dòng {}: add interface_templates false" .format(line_in_excel))
+            print("Lỗi khi tạo interface template, nhà sản xuất: {} hoặc kiểu thiết bị: {} sai" .format(manufacturer, device_type))
         interface_type= data['Loại interface']['{}' .format(numerical_order)]
         count_inf = data['Số interface']['{}' .format(numerical_order)]
         types= data['Kiểu interface']['{}' .format(numerical_order)]
@@ -24,7 +30,9 @@ def create_inf_template(key_data, data):
     for numerical_order in key_data:
         device_type_id, interface_type, count_inf, types, mgmt_only, manufacturer = get_inf_template(numerical_order, data)
         if device_type_id == None:
-            break
+            # line_in_excel = int(numerical_order) + 2
+            # print("[TẠO INTERFACE TEMPLATE] - dòng {}: add interface_templates false" .format(line_in_excel))
+            continue
         else:
             if type(count_inf) == int:
                 inf = 0
@@ -41,9 +49,15 @@ def create_inf_template(key_data, data):
                         )
                     )
                     try:
-                        netbox.dcim.interface_templates.create(add_data)
+                        with open('/var/log/logrunning.log', 'w') as f:
+                            with contextlib.redirect_stdout(f):
+                                netbox.dcim.interface_templates.create(add_data)
+                        print("[TẠO INTERFACE TEMPLATE] - dòng {}: add interface_templates success" .format(line_in_excel))
+                        line_in_excel = int(numerical_order) + 2
                     except pynetbox.RequestError as e:
-                        print(e.error)
+                        with open('/var/log/logrunning.log', 'w') as f:
+                            with contextlib.redirect_stdout(f):
+                                print(e.error)
                     # print(add_data)
             else:
                 if len(count_inf) == 5:
@@ -96,9 +110,15 @@ def create_inf_template(key_data, data):
                             )
                         )
                         try:
-                            netbox.dcim.interface_templates.create(add_data)
+                            with open('/var/log/logrunning.log', 'w') as f:
+                                with contextlib.redirect_stdout(f):
+                                    netbox.dcim.interface_templates.create(add_data)
+                            line_in_excel = int(numerical_order) + 2
+                            print("[TẠO INTERFACE TEMPLATE] - dòng {}: add interface_templates success" .format(line_in_excel))
                         except pynetbox.RequestError as e:
-                            print(e.error)
+                            with open('/var/log/logrunning.log', 'w') as f:
+                                with contextlib.redirect_stdout(f):
+                                    print(e.error)
                         # print(add_data)
                     else:
                         inf = inf+ 1
@@ -113,14 +133,24 @@ def create_inf_template(key_data, data):
                             )
                         )
                         try:
-                            netbox.dcim.interface_templates.create(add_data)
+                            with open('/var/log/logrunning.log', 'w') as f:
+                                with contextlib.redirect_stdout(f):
+                                    netbox.dcim.interface_templates.create(add_data)
+                            line_in_excel = int(numerical_order) + 2
+                            print("[TẠO INTERFACE TEMPLATE] - dòng {}: add interface_templates success" .format(line_in_excel))
                         except pynetbox.RequestError as e:
-                            print(e.error)
+                            with open('/var/log/logrunning.log', 'w') as f:
+                                with contextlib.redirect_stdout(f):
+                                    print(e.error)
     return
 
 def create_inf_template_main():
     data = get_inf_tpls()
     key_data = get_key_data(data)
-    create_inf_template(key_data, data)
+    try:
+        create_inf_template(key_data, data)
+        print("Tạo interface template cho device thành công")
+    except:
+        print("Tạo interface template cho device bị lỗi")
     return
 # create_inf_template_main()

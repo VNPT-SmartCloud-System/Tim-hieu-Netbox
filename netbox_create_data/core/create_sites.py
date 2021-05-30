@@ -1,5 +1,6 @@
 import pynetbox
 from slugify import slugify
+import contextlib
 from check_data_netbox import check_regions, check_tenants, netbox
 from get_data_json import get_regions_sites, get_key_data
 
@@ -10,11 +11,21 @@ def get_data_site(numerical_order, data):
     if site_name == None or region_name == None:
         add_data = None
     else:
-        region_id= check_regions(region_name)
+        try:
+            region_id= check_regions(region_name)
+        except:
+            line_in_excel = int(numerical_order) + 2
+            print("[TẠO SITE] - dòng {} add site false" .format(line_in_excel))
+            print("Lỗi tên regions: {}" .format(region_name))
         if tenant_name == None:
             tenant_id = None
         else:
-            tenant_id = check_tenants(tenant_name)
+            try:
+                tenant_id = check_tenants(tenant_name)
+            except:
+                line_in_excel = int(numerical_order) + 2
+                print("[TẠO SITE] - dòng {} add site false" .format(line_in_excel))
+                print("Lỗi tên người sở hữu: {}" .format(tenant_name))
         convert_slug = slugify(site_name)
         slug = convert_slug.lower()
         add_data = list()
@@ -38,18 +49,30 @@ def create_sites(key_data, data):
     for numerical_order in key_data:
         add_data = get_data_site(numerical_order, data)
         if add_data == None:
+            # line_in_excel = int(numerical_order) + 2
+            # print("[TẠO SITE] - dòng {} add site false" .format(line_in_excel))
             continue
         else:
             try:
-                netbox.dcim.sites.create(add_data)
+                with open('/var/log/logrunning.log', 'w') as f:
+                    with contextlib.redirect_stdout(f):
+                        netbox.dcim.sites.create(add_data)
+                line_in_excel = int(numerical_order) + 2
+                print("[TẠO SITE] - dòng {} add site success" .format(line_in_excel))
             except pynetbox.RequestError as e:
-                print(e.error)
+                with open('/var/log/logrunning.log', 'w') as f:
+                    with contextlib.redirect_stdout(f):
+                        print(e.error)
             # print(add_data)
     return
 
 def create_site_main():
     data = get_regions_sites()
     key_data = get_key_data(data)
-    create_sites(key_data, data)
+    try:
+        create_sites(key_data, data)
+        print("Tạo site thành công")
+    except:
+        print("Lỗi khi tạo site")
     return
 # create_site_main()

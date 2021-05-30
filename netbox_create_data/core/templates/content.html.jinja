@@ -1,0 +1,25 @@
+<!doctype html>
+<head>
+<title>Log NetBox</title>
+<style>
+	a:link, a:visited {
+	  background-color: #f44336;
+	  color: white;
+	  padding: 9px 20px;
+	  text-align: center;
+	  text-decoration: none;
+	  display: inline-block;
+	}
+	
+	a:hover, a:active {
+	  background-color: red;
+	}
+</style>
+</head>
+<body>
+    <div>
+        <iframe frameborder="0" noresize="noresize"
+     style='background: transparent; width: 100%; height:650px;' src="{{ url_for('content')}}"></iframe>
+    </div>
+</body><br><br>
+<a href="/" target="_blank">Return Upload</a>   <a href="run" target="_blank">Return Run</a>
