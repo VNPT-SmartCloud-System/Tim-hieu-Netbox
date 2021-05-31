@@ -3,7 +3,7 @@ from flask import Flask, flash, request, redirect, render_template
 from flask.wrappers import Response
 from werkzeug.utils import secure_filename
 import run
-import kiem_tra_excel
+import review_excel
 import time
 
 app=Flask(__name__)
@@ -86,7 +86,7 @@ def run_check():
     def run_netbox():
         sys.stdout
         sys.stdout = open('log.txt', 'w')
-        kiem_tra_excel.main()
+        review_excel.main()
         sys.stdout.close()
         return
     def inner():
