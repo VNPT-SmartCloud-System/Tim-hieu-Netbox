@@ -1,0 +1,44 @@
+
+<!doctype html>
+<head>
+	<title>NetBox run update</title>
+	<style>
+	a:link, a:visited {
+	  background-color: #f44336;
+	  color: white;
+	  padding: 9px 20px;
+	  text-align: center;
+	  text-decoration: none;
+	  display: inline-block;
+	}
+	
+	a:hover, a:active {
+	  background-color: red;
+	}
+	</style>
+	</head>
+
+<h2>Kiểm tra và tiến hành Update</h2>
+<p>
+	{% with messages = get_flashed_messages() %}
+	  {% if messages %}
+		<ul class=flashes>
+		{% for message in messages %}
+		  <li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	  {% endif %}
+	{% endwith %}
+</p>
+<hr>
+<h3>Kiểm tra file excel</h3>
+<div>
+	<iframe frameborder="0" noresize="noresize"
+ style='background: transparent; width: 100%; height:400px;' src="{{ url_for('run_check')}}"></iframe>
+</div>
+<hr><br>
+<form method="POST" action="/run" enctype="multipart/form-data">
+	<input type="submit" value="Tiếp tục xử lý">
+</form>
+<br><br>
+<a href="/" target="_blank">Return Upload</Return> </a>
